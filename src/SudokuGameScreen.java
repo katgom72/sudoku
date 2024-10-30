@@ -8,8 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
+import java.util.Stack;
+
 
 public class SudokuGameScreen extends JFrame {
+    private Stack<Move> moveStack = new Stack<>();
     private static final int SIZE = 9;
     private int[][] sudokuBoard;
     private JButton[][] sudokuButtons;
@@ -106,6 +109,8 @@ public class SudokuGameScreen extends JFrame {
             undoButton.setContentAreaFilled(false);
             undoButton.setBorderPainted(false);
             undoButton.setOpaque(false);
+            undoButton.addActionListener(e -> undoLastMove());
+
 
 
             layeredPane.add(undoButton, Integer.valueOf(2));
@@ -117,11 +122,152 @@ public class SudokuGameScreen extends JFrame {
             e.printStackTrace(); // Dodaj to, aby zobaczyć, czy występują błędy podczas ładowania
             JOptionPane.showMessageDialog(this, "Undo image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        // Dodanie przycisku wymazywania (obrazka PNG)
+        try {
+            BufferedImage clearIcon = ImageIO.read(new File("resources/clear.png")); // Zmiana na nowy plik PNG
+            JButton clearButton = new JButton(new ImageIcon(clearIcon));
+            clearButton.setBounds(190, 580, 50, 50); // Ustawienia pozycji przycisku
+            clearButton.setContentAreaFilled(false);
+            clearButton.setBorderPainted(false);
+            clearButton.setOpaque(false);
+
+            clearButton.addActionListener(e -> clearHighlightedCell());
+
+
+
+            layeredPane.add(clearButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+
+            layeredPane.revalidate(); // Uaktualnij układ
+            layeredPane.repaint(); // Przerysuj panel
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Clear image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // Dodanie przycisku wymazywania (obrazka PNG)
+        try {
+            BufferedImage notesIcon = ImageIO.read(new File("resources/notes.png")); // Zmiana na nowy plik PNG
+            JButton notesButton = new JButton(new ImageIcon(notesIcon));
+            notesButton.setBounds(330, 580, 50, 50); // Ustawienia pozycji przycisku
+            notesButton.setContentAreaFilled(false);
+            notesButton.setBorderPainted(false);
+            notesButton.setOpaque(false);
+
+
+            layeredPane.add(notesButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+
+            layeredPane.revalidate(); // Uaktualnij układ
+            layeredPane.repaint(); // Przerysuj panel
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Notes image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // Dodanie przycisku cofania (obrazka PNG)
+        try {
+            BufferedImage backIcon = ImageIO.read(new File("resources/back.png")); // Zmiana na nowy plik PNG
+            JButton backButton = new JButton(new ImageIcon(backIcon));
+            backButton.setBounds(30, 50, 60, 40); // Ustawienia pozycji przycisku
+            backButton.setContentAreaFilled(false);
+            backButton.setBorderPainted(false);
+            backButton.setOpaque(false);
+
+
+            layeredPane.add(backButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+
+            layeredPane.revalidate(); // Uaktualnij układ
+            layeredPane.repaint(); // Przerysuj panel
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Back image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        // Dodanie przycisku wymazywania (obrazka PNG)
+        try {
+            BufferedImage settingsIcon = ImageIO.read(new File("resources/settings.png")); // Zmiana na nowy plik PNG
+            JButton settingsButton = new JButton(new ImageIcon(settingsIcon));
+            settingsButton.setBounds(350, 50, 60, 40); // Ustawienia pozycji przycisku
+            settingsButton.setContentAreaFilled(false);
+            settingsButton.setBorderPainted(false);
+            settingsButton.setOpaque(false);
+
+
+            layeredPane.add(settingsButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+
+            layeredPane.revalidate(); // Uaktualnij układ
+            layeredPane.repaint(); // Przerysuj panel
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Settings image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
         
     }
+    // Nowa klasa do przechowywania informacji o ruchach
+    private class Move {
+        int row, col, previousValue;
+
+        public Move(int row, int col, int previousValue) {
+            this.row = row;
+            this.col = col;
+            this.previousValue = previousValue;
+        }
+    }
+    // Nowa metoda do cofania ostatniego ruchu
+    private void undoLastMove() {
+        if (!moveStack.isEmpty()) {
+            Move lastMove = moveStack.pop();
+            JButton button = sudokuButtons[lastMove.row][lastMove.col];
+            
+            // Przywracamy poprzednią wartość
+            if (lastMove.previousValue == 0) {
+                button.setText("");
+            } else {
+                button.setText(String.valueOf(lastMove.previousValue));
+            }
+        }
+    }
+    private void clearHighlightedCell() {
+        if (lastHighlightedButton != null) {
+            int row = lastHighlightedButton.getY() / 40;
+            int col = lastHighlightedButton.getX() / 40;
+    
+            // Sprawdzamy, czy komórka nie jest wartością pierwotną
+            if (!originalValues[row][col]) {
+                String currentText = lastHighlightedButton.getText();
+                int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+    
+                // Dodajemy ruch do stosu, aby umożliwić cofnięcie
+                moveStack.push(new Move(row, col, currentValue));
+    
+                // Wyczyść zawartość przycisku
+                lastHighlightedButton.setText("");
+            }
+        }
+    }
+    
+
 
     private void handleButtonClick(int row, int col) {
-        resetButtonColors();
+        resetButtonColors(); // Resetujemy kolory przed nowym kliknięciem
+        
+        // Pobieramy wartość z klikniętej komórki
+        String cellValue = sudokuButtons[row][col].getText();
+        
+        // Jeśli kliknięta komórka ma wartość, podświetlamy inne komórki z tą samą liczbą
+        if (!cellValue.isEmpty()) {
+            for (int i = 0; i < SIZE; i++) {
+                for (int j = 0; j < SIZE; j++) {
+                    if (sudokuButtons[i][j].getText().equals(cellValue)) {
+                        sudokuButtons[i][j].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+                    }
+                }
+            }
+        }
+    
+        // Podświetlenie całego wiersza i kolumny
         sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
         for (int k = 0; k < SIZE; k++) {
             if (k != col) {
@@ -131,18 +277,30 @@ public class SudokuGameScreen extends JFrame {
                 sudokuButtons[k][col].setBackground(ColorPalette.HIGHLIGHT_COLOR);
             }
         }
+    
         lastHighlightedButton = sudokuButtons[row][col];
     }
+    
 
     private void handleNumberButtonClick(int number) {
         if (lastHighlightedButton != null) {
-            if (!originalValues[lastHighlightedButton.getY() / 40][lastHighlightedButton.getX() / 40]) {
+            int row = lastHighlightedButton.getY() / 40;
+            int col = lastHighlightedButton.getX() / 40;
+    
+            if (!originalValues[row][col]) {
+                String currentText = lastHighlightedButton.getText();
+                int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+    
+                // Dodajemy ruch do stosu
+                moveStack.push(new Move(row, col, currentValue));
+    
+                // Aktualizujemy przycisk
                 lastHighlightedButton.setText(String.valueOf(number));
                 lastHighlightedButton.setForeground(ColorPalette.TEXT_DARK_GREEN);
             }
         }
     }
-
+    
     private void resetButtonColors() {
         if (lastHighlightedButton != null) {
             for (int i = 0; i < SIZE; i++) {
