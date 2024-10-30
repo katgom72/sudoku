@@ -20,6 +20,9 @@ public class SudokuGameScreen extends JFrame {
     private static final Color BORDER_COLOR = ColorPalette.ICON_BORDER_COLOR;
     Color originalColor = ColorPalette.SUDOKU_SQUARE_COLOR;
     private JButton lastHighlightedButton = null;
+    private int[] numberCount = new int[SIZE + 1]; // Licznik wystąpień dla każdego numeru
+    private JButton[] numberButtons = new JButton[SIZE]; // Przechowywanie przycisków numerycznych
+
 
     public SudokuGameScreen() {
         setSize(432, 768);
@@ -87,9 +90,10 @@ public class SudokuGameScreen extends JFrame {
         JPanel numberPanel = new JPanel(new GridLayout(1, 9, 5, 5));
         numberPanel.setBounds(16, 650, 400, 40);
 
-        for (int i = 1; i <= 9; i++) {
+        for (int i = 1; i <= SIZE; i++) {
             final int number = i; 
-            JButton numberButton = new JButton(String.valueOf(i));
+            numberButtons[i - 1] = new JButton(String.valueOf(i));
+            JButton numberButton = numberButtons[i - 1];
             numberButton.setForeground(Color.BLACK);
             numberButton.setFont(new Font("Arial", Font.BOLD, 40));
             numberButton.setContentAreaFilled(false);
@@ -100,6 +104,8 @@ public class SudokuGameScreen extends JFrame {
         }
         numberPanel.setBackground(ColorPalette.BACKGROUND_COLOR);
         layeredPane.add(numberPanel, Integer.valueOf(1));
+        countInitialNumbers();
+
 
         // Dodanie przycisku cofania (obrazka PNG)
         try {
@@ -205,6 +211,18 @@ public class SudokuGameScreen extends JFrame {
 
         
     }
+    private void countInitialNumbers() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                int value = sudokuBoard[i][j];
+                if (value != 0) {
+                    numberCount[value]++;
+                }
+            }
+        }
+        updateNumberButtonStates();
+    }
+
     // Nowa klasa do przechowywania informacji o ruchach
     private class Move {
         int row, col, previousValue;
@@ -221,12 +239,25 @@ public class SudokuGameScreen extends JFrame {
             Move lastMove = moveStack.pop();
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
             
+            // Sprawdzamy aktualną wartość w komórce
+            String currentText = button.getText();
+            int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+    
+            // Jeśli była ustawiona liczba, zmniejszamy jej licznik
+            if (currentValue != 0) {
+                numberCount[currentValue]--;
+            }
+    
             // Przywracamy poprzednią wartość
             if (lastMove.previousValue == 0) {
                 button.setText("");
             } else {
                 button.setText(String.valueOf(lastMove.previousValue));
+                numberCount[lastMove.previousValue]++; // Zwiększamy licznik dla przywróconej liczby
             }
+    
+            // Aktualizujemy stan przycisków numerycznych
+            updateNumberButtonStates();
         }
     }
     private void clearHighlightedCell() {
@@ -234,16 +265,22 @@ public class SudokuGameScreen extends JFrame {
             int row = lastHighlightedButton.getY() / 40;
             int col = lastHighlightedButton.getX() / 40;
     
-            // Sprawdzamy, czy komórka nie jest wartością pierwotną
             if (!originalValues[row][col]) {
                 String currentText = lastHighlightedButton.getText();
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
-                // Dodajemy ruch do stosu, aby umożliwić cofnięcie
+                if (currentValue != 0) {
+                    numberCount[currentValue]--; // Zmniejszamy licznik dla wymazywanej liczby
+                }
+    
+                // Dodajemy ruch do stosu
                 moveStack.push(new Move(row, col, currentValue));
     
                 // Wyczyść zawartość przycisku
                 lastHighlightedButton.setText("");
+    
+                // Aktualizujemy stan przycisków numerycznych
+                updateNumberButtonStates();
             }
         }
     }
@@ -286,20 +323,38 @@ public class SudokuGameScreen extends JFrame {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
             int col = lastHighlightedButton.getX() / 40;
-    
+
             if (!originalValues[row][col]) {
                 String currentText = lastHighlightedButton.getText();
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
-    
-                // Dodajemy ruch do stosu
+
                 moveStack.push(new Move(row, col, currentValue));
-    
-                // Aktualizujemy przycisk
+
+                // Aktualizujemy licznik: usuwamy starą wartość
+                if (currentValue != 0) {
+                    numberCount[currentValue]--;
+                }
+
                 lastHighlightedButton.setText(String.valueOf(number));
                 lastHighlightedButton.setForeground(ColorPalette.TEXT_DARK_GREEN);
+
+                // Aktualizujemy licznik: dodajemy nową wartość
+                numberCount[number]++;
+                updateNumberButtonStates();
             }
         }
     }
+
+    private void updateNumberButtonStates() {
+        for (int i = 1; i <= SIZE; i++) {
+            if (numberCount[i] >= 9) {
+                numberButtons[i - 1].setEnabled(false); // Wyłączenie przycisku
+            } else {
+                numberButtons[i - 1].setEnabled(true);  // Włączenie przycisku, jeśli liczba wystąpień jest < 9
+            }
+        }
+    }
+
     
     private void resetButtonColors() {
         if (lastHighlightedButton != null) {
