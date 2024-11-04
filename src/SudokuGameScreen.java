@@ -12,7 +12,7 @@ import java.util.Stack;
 
 
 public class SudokuGameScreen extends JFrame {
-    private Stack<Move> moveStack = new Stack<>();
+    private Stack<Move> moveStack = new Stack<>(); 
     private static final int SIZE = 9;
     private int[][] sudokuBoard;
     private JButton[][] sudokuButtons;
@@ -20,8 +20,12 @@ public class SudokuGameScreen extends JFrame {
     private static final Color BORDER_COLOR = ColorPalette.ICON_BORDER_COLOR;
     Color originalColor = ColorPalette.SUDOKU_SQUARE_COLOR;
     private JButton lastHighlightedButton = null;
-    private int[] numberCount = new int[SIZE + 1]; // Licznik wystąpień dla każdego numeru
-    private JButton[] numberButtons = new JButton[SIZE]; // Przechowywanie przycisków numerycznych
+    private int[] numberCount = new int[SIZE + 1]; 
+    private JButton[] numberButtons = new JButton[SIZE]; 
+    private boolean notesModeActive = false;
+
+    private ImageIcon notesIconActive;
+    private ImageIcon notesIconInactive;
 
 
     public SudokuGameScreen() {
@@ -39,7 +43,7 @@ public class SudokuGameScreen extends JFrame {
             BufferedImage backgroundImage = ImageIO.read(new File("resources/background3.png"));
             JPanel backgroundPanel = new BackgroundPanel(backgroundImage);
             backgroundPanel.setBounds(0, 0, getWidth(), getHeight());
-            layeredPane.add(backgroundPanel, Integer.valueOf(0)); // Tło na najniższą warstwę
+            layeredPane.add(backgroundPanel, Integer.valueOf(0)); 
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -60,6 +64,8 @@ public class SudokuGameScreen extends JFrame {
                 sudokuButtons[i][j].setBackground(originalColor);
                 sudokuButtons[i][j].setOpaque(true);
                 sudokuButtons[i][j].setContentAreaFilled(true);
+                sudokuButtons[i][j].setFont(new Font("Arial", Font.BOLD, 24)); 
+
 
                 int row = i;
                 int col = j;
@@ -84,9 +90,9 @@ public class SudokuGameScreen extends JFrame {
                 sudokuPanel.add(sudokuButtons[i][j]);
             }
         }
-        layeredPane.add(sudokuPanel, Integer.valueOf(1)); // Panel Sudoku na warstwę wyższą niż tło
+        layeredPane.add(sudokuPanel, Integer.valueOf(1));
 
-        // Dodanie panelu przycisków numerycznych
+        // Panel przycisków numerycznych
         JPanel numberPanel = new JPanel(new GridLayout(1, 9, 5, 5));
         numberPanel.setBounds(16, 650, 400, 40);
 
@@ -107,7 +113,7 @@ public class SudokuGameScreen extends JFrame {
         countInitialNumbers();
 
 
-        // Dodanie przycisku cofania (obrazka PNG)
+        // Przycisk cofania 
         try {
             BufferedImage undoIcon = ImageIO.read(new File("resources/undo.png"));
             JButton undoButton = new JButton(new ImageIcon(undoIcon));
@@ -121,18 +127,18 @@ public class SudokuGameScreen extends JFrame {
 
             layeredPane.add(undoButton, Integer.valueOf(2));
 
-            layeredPane.revalidate(); // Uaktualnij układ
-            layeredPane.repaint(); // Przerysuj panel
+            layeredPane.revalidate(); 
+            layeredPane.repaint(); 
             
         } catch (IOException e) {
-            e.printStackTrace(); // Dodaj to, aby zobaczyć, czy występują błędy podczas ładowania
+            e.printStackTrace(); 
             JOptionPane.showMessageDialog(this, "Undo image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Dodanie przycisku wymazywania (obrazka PNG)
+        // Przycisk wymazywania
         try {
-            BufferedImage clearIcon = ImageIO.read(new File("resources/clear.png")); // Zmiana na nowy plik PNG
+            BufferedImage clearIcon = ImageIO.read(new File("resources/clear.png")); 
             JButton clearButton = new JButton(new ImageIcon(clearIcon));
-            clearButton.setBounds(190, 580, 50, 50); // Ustawienia pozycji przycisku
+            clearButton.setBounds(190, 580, 50, 50); 
             clearButton.setContentAreaFilled(false);
             clearButton.setBorderPainted(false);
             clearButton.setOpaque(false);
@@ -141,67 +147,77 @@ public class SudokuGameScreen extends JFrame {
 
 
 
-            layeredPane.add(clearButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+            layeredPane.add(clearButton, Integer.valueOf(2)); 
 
-            layeredPane.revalidate(); // Uaktualnij układ
-            layeredPane.repaint(); // Przerysuj panel
+            layeredPane.revalidate(); 
+            layeredPane.repaint(); 
 
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Clear image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Dodanie przycisku wymazywania (obrazka PNG)
+        // Przycisk notatek
         try {
-            BufferedImage notesIcon = ImageIO.read(new File("resources/notes.png")); // Zmiana na nowy plik PNG
-            JButton notesButton = new JButton(new ImageIcon(notesIcon));
-            notesButton.setBounds(330, 580, 50, 50); // Ustawienia pozycji przycisku
+            notesIconInactive = new ImageIcon(ImageIO.read(new File("resources/notes.png")));
+            notesIconActive = new ImageIcon(ImageIO.read(new File("resources/notes_active.png"))); 
+            JButton notesButton = new JButton(notesIconInactive);
+            notesButton.setBounds(330, 580, 50, 50); 
             notesButton.setContentAreaFilled(false);
             notesButton.setBorderPainted(false);
             notesButton.setOpaque(false);
 
+            notesButton.addActionListener(e -> {
+                notesModeActive = !notesModeActive; 
 
-            layeredPane.add(notesButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+                if (notesModeActive) {
+                    notesButton.setIcon(notesIconActive); 
+                } else {
+                    notesButton.setIcon(notesIconInactive); 
+                }
+            });
 
-            layeredPane.revalidate(); // Uaktualnij układ
-            layeredPane.repaint(); // Przerysuj panel
+            layeredPane.add(notesButton, Integer.valueOf(2)); 
+
+            layeredPane.revalidate();
+            layeredPane.repaint();
 
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Notes image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Dodanie przycisku cofania (obrazka PNG)
+        // Przycisku cofania do menu
         try {
-            BufferedImage backIcon = ImageIO.read(new File("resources/back.png")); // Zmiana na nowy plik PNG
+            BufferedImage backIcon = ImageIO.read(new File("resources/back.png"));
             JButton backButton = new JButton(new ImageIcon(backIcon));
-            backButton.setBounds(30, 50, 60, 40); // Ustawienia pozycji przycisku
+            backButton.setBounds(30, 50, 60, 40);
             backButton.setContentAreaFilled(false);
             backButton.setBorderPainted(false);
             backButton.setOpaque(false);
 
 
-            layeredPane.add(backButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+            layeredPane.add(backButton, Integer.valueOf(2)); 
 
-            layeredPane.revalidate(); // Uaktualnij układ
-            layeredPane.repaint(); // Przerysuj panel
+            layeredPane.revalidate(); 
+            layeredPane.repaint(); 
 
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Back image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Dodanie przycisku wymazywania (obrazka PNG)
+        // Przycisk ustwień
         try {
-            BufferedImage settingsIcon = ImageIO.read(new File("resources/settings.png")); // Zmiana na nowy plik PNG
+            BufferedImage settingsIcon = ImageIO.read(new File("resources/settings.png")); 
             JButton settingsButton = new JButton(new ImageIcon(settingsIcon));
-            settingsButton.setBounds(350, 50, 60, 40); // Ustawienia pozycji przycisku
+            settingsButton.setBounds(350, 50, 60, 40); 
             settingsButton.setContentAreaFilled(false);
             settingsButton.setBorderPainted(false);
             settingsButton.setOpaque(false);
 
 
-            layeredPane.add(settingsButton, Integer.valueOf(2)); // Dodanie przycisku do layeredPane
+            layeredPane.add(settingsButton, Integer.valueOf(2));
 
-            layeredPane.revalidate(); // Uaktualnij układ
-            layeredPane.repaint(); // Przerysuj panel
+            layeredPane.revalidate(); 
+            layeredPane.repaint(); 
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -223,7 +239,6 @@ public class SudokuGameScreen extends JFrame {
         updateNumberButtonStates();
     }
 
-    // Nowa klasa do przechowywania informacji o ruchach
     private class Move {
         int row, col, previousValue;
 
@@ -233,30 +248,26 @@ public class SudokuGameScreen extends JFrame {
             this.previousValue = previousValue;
         }
     }
-    // Nowa metoda do cofania ostatniego ruchu
     private void undoLastMove() {
         if (!moveStack.isEmpty()) {
             Move lastMove = moveStack.pop();
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
             
-            // Sprawdzamy aktualną wartość w komórce
+            
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
-            // Jeśli była ustawiona liczba, zmniejszamy jej licznik
             if (currentValue != 0) {
                 numberCount[currentValue]--;
             }
     
-            // Przywracamy poprzednią wartość
             if (lastMove.previousValue == 0) {
                 button.setText("");
             } else {
                 button.setText(String.valueOf(lastMove.previousValue));
-                numberCount[lastMove.previousValue]++; // Zwiększamy licznik dla przywróconej liczby
+                numberCount[lastMove.previousValue]++; 
             }
     
-            // Aktualizujemy stan przycisków numerycznych
             updateNumberButtonStates();
         }
     }
@@ -270,16 +281,13 @@ public class SudokuGameScreen extends JFrame {
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
                 if (currentValue != 0) {
-                    numberCount[currentValue]--; // Zmniejszamy licznik dla wymazywanej liczby
+                    numberCount[currentValue]--; 
                 }
     
-                // Dodajemy ruch do stosu
                 moveStack.push(new Move(row, col, currentValue));
     
-                // Wyczyść zawartość przycisku
                 lastHighlightedButton.setText("");
     
-                // Aktualizujemy stan przycisków numerycznych
                 updateNumberButtonStates();
             }
         }
@@ -288,12 +296,11 @@ public class SudokuGameScreen extends JFrame {
 
 
     private void handleButtonClick(int row, int col) {
-        resetButtonColors(); // Resetujemy kolory przed nowym kliknięciem
+        resetButtonColors(); 
         
-        // Pobieramy wartość z klikniętej komórki
         String cellValue = sudokuButtons[row][col].getText();
         
-        // Jeśli kliknięta komórka ma wartość, podświetlamy inne komórki z tą samą liczbą
+        // Podświetlanie komórek z tą samą liczbą
         if (!cellValue.isEmpty()) {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
@@ -330,7 +337,6 @@ public class SudokuGameScreen extends JFrame {
 
                 moveStack.push(new Move(row, col, currentValue));
 
-                // Aktualizujemy licznik: usuwamy starą wartość
                 if (currentValue != 0) {
                     numberCount[currentValue]--;
                 }
@@ -338,7 +344,6 @@ public class SudokuGameScreen extends JFrame {
                 lastHighlightedButton.setText(String.valueOf(number));
                 lastHighlightedButton.setForeground(ColorPalette.TEXT_DARK_GREEN);
 
-                // Aktualizujemy licznik: dodajemy nową wartość
                 numberCount[number]++;
                 updateNumberButtonStates();
             }
@@ -348,9 +353,9 @@ public class SudokuGameScreen extends JFrame {
     private void updateNumberButtonStates() {
         for (int i = 1; i <= SIZE; i++) {
             if (numberCount[i] >= 9) {
-                numberButtons[i - 1].setEnabled(false); // Wyłączenie przycisku
+                numberButtons[i - 1].setEnabled(false); 
             } else {
-                numberButtons[i - 1].setEnabled(true);  // Włączenie przycisku, jeśli liczba wystąpień jest < 9
+                numberButtons[i - 1].setEnabled(true);  
             }
         }
     }

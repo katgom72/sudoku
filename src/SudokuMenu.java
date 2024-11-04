@@ -10,12 +10,10 @@ import javax.imageio.ImageIO;
 public class SudokuMenu extends JFrame {
 
     public SudokuMenu() {
-        // Ustawienia główne okna
         setSize(432, 768);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Ustawienie tła
         try {
             BufferedImage backgroundImage = ImageIO.read(new File("resources/background2.png"));
             setContentPane(new BackgroundPanel(backgroundImage));
@@ -25,9 +23,8 @@ public class SudokuMenu extends JFrame {
         }
 
         setLocationRelativeTo(null);
-        setLayout(null); // Ustawienie układu na null, aby można było ustawić pozycje ręcznie
+        setLayout(null);
         
-        // Dodawanie przycisków
         addButton("Poziom 1", 255);
         addButton("Jak grać?", 325);
         addButton("Statystyki", 395);
@@ -40,9 +37,9 @@ public class SudokuMenu extends JFrame {
         button.setBounds(66, yPosition, 300, 60);
         button.setFont(new Font("Arial", Font.BOLD, 20));
         button.setFocusPainted(false);
-        button.setForeground(ColorPalette.TEXT_DARK_GREEN); // Kolor tekstu
-        button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); // Kolor tła
-        button.setBorder(BorderFactory.createEmptyBorder()); // Usuń obramowanie
+        button.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button.setBorder(BorderFactory.createEmptyBorder());
 
         // Zaokrąglone tło
         button.setContentAreaFilled(false);
@@ -65,7 +62,6 @@ public class SudokuMenu extends JFrame {
         add(button);
     }
 
-    // Główna metoda uruchomieniowa
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             SudokuMenu screen = new SudokuMenu();
@@ -73,13 +69,12 @@ public class SudokuMenu extends JFrame {
         });
     }
 
-    // Klasa wewnętrzna do renderowania tła
     private class BackgroundPanel extends JPanel {
         private final Image background;
 
         public BackgroundPanel(Image background) {
             this.background = background;
-            setLayout(null); // Ustawienie układu na null, aby można było ręcznie dodawać komponenty
+            setLayout(null); 
         }
 
         @Override
@@ -90,7 +85,6 @@ public class SudokuMenu extends JFrame {
     }
 }
 
-// Klasa niestandardowego UI dla przycisków zaokrąglonych
 class RoundedButtonUI extends javax.swing.plaf.basic.BasicButtonUI {
     @Override
     public void paint(Graphics g, JComponent c) {
@@ -98,11 +92,9 @@ class RoundedButtonUI extends javax.swing.plaf.basic.BasicButtonUI {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Tło zaokrąglonego przycisku
         g2.setColor(button.getBackground());
         g2.fillRoundRect(0, 0, button.getWidth(), button.getHeight(), 30, 30);
 
-        // Tekst przycisku
         FontMetrics fm = g2.getFontMetrics();
         Rectangle r = new Rectangle(button.getWidth(), button.getHeight());
         int x = (r.width - fm.stringWidth(button.getText())) / 2;
