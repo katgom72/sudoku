@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import java.util.Stack;
+
+
 
 
 public class SudokuGameScreen extends JFrame {
@@ -26,6 +29,7 @@ public class SudokuGameScreen extends JFrame {
 
     private ImageIcon notesIconActive;
     private ImageIcon notesIconInactive;
+    
 
 
     public SudokuGameScreen() {
@@ -193,6 +197,14 @@ public class SudokuGameScreen extends JFrame {
             backButton.setContentAreaFilled(false);
             backButton.setBorderPainted(false);
             backButton.setOpaque(false);
+
+            backButton.addActionListener(e -> {
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuMenu menuScreen = new SudokuMenu(); 
+                    menuScreen.setVisible(true); 
+                });
+            });
 
 
             layeredPane.add(backButton, Integer.valueOf(2)); 
