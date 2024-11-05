@@ -36,7 +36,12 @@ public class SudokuGameScreen extends JFrame {
     private Timer timer;
     private JLabel timerLabel;
 
-    
+    private static final int EASY = 1;
+    private static final int MEDIUM = 2;
+    private static final int HARD = 3;
+    private static final int VERY_HARD = 4;
+    private String difficultyLevelText;
+
 
 
     public SudokuGameScreen() {
@@ -242,21 +247,18 @@ public class SudokuGameScreen extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Settings image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        // Inicjalizacja etykiety błędów
         errorLabel = new JLabel("Błędy: 0"); 
         errorLabel.setFont(new Font("Arial", Font.BOLD, 18)); 
         errorLabel.setForeground(ColorPalette.TEXT_DARK_GREEN); 
-        errorLabel.setBounds(185, 135, 400, 40); // Ustaw pozycję etykiety
-        layeredPane.add(errorLabel, Integer.valueOf(1)); // Dodaj etykietę do warstwy
+        errorLabel.setBounds(185, 135, 400, 40); 
+        layeredPane.add(errorLabel, Integer.valueOf(1)); 
 
-        // Inicjalizacja etykiety czasu
         timerLabel = new JLabel("Czas: 0s");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
         timerLabel.setForeground(ColorPalette.TEXT_DARK_GREEN);
-        timerLabel.setBounds(287, 135, 200, 40); // Ustaw pozycję etykiety
-        layeredPane.add(timerLabel, Integer.valueOf(1)); // Dodaj etykietę do warstwy
+        timerLabel.setBounds(312, 135, 200, 40);
+        layeredPane.add(timerLabel, Integer.valueOf(1)); 
 
-        // Ustawienie początkowego czasu i uruchomienie timera
         startTime = System.currentTimeMillis();
         timer = new Timer(1000, e -> updateTimer());
         timer.start();
@@ -267,13 +269,11 @@ public class SudokuGameScreen extends JFrame {
         
     }
     private void updateTimer() {
-        long elapsedTime = System.currentTimeMillis() - startTime; // Oblicz czas w milisekundach
-        long seconds = (elapsedTime / 1000) % 60; // Oblicz sekundy
-        long minutes = (elapsedTime / (1000 * 60)) % 60; // Oblicz minuty
-        long hours = (elapsedTime / (1000 * 60 * 60)) % 24; // Oblicz godziny
+        long elapsedTime = System.currentTimeMillis() - startTime; 
+        long seconds = (elapsedTime / 1000) % 60;
+        long minutes = (elapsedTime / (1000 * 60)) % 60;
     
-        // Zaktualizuj etykietę
-        timerLabel.setText(String.format("Czas: %02d:%02d:%02d", hours, minutes, seconds));
+        timerLabel.setText(String.format("Czas: %02d:%02d", minutes, seconds));
     }
     
     private void countInitialNumbers() {
@@ -349,7 +349,6 @@ public class SudokuGameScreen extends JFrame {
         
         String cellValue = sudokuButtons[row][col].getText();
         
-        // Podświetlanie komórek z tą samą liczbą
         if (!cellValue.isEmpty()) {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
@@ -360,7 +359,6 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     
-        // Podświetlenie całego wiersza i kolumny
         sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
         for (int k = 0; k < SIZE; k++) {
             if (k != col) {
@@ -395,11 +393,9 @@ public class SudokuGameScreen extends JFrame {
     
                 numberCount[number]++;
     
-                // Sprawdź, czy liczba jest prawidłowa
                 if (!isValid(sudokuBoard, row, col, number)) {
-                    errorCount++; // Zwiększ liczbę błędów, jeśli liczba jest nieprawidłowa
-                    System.out.println("Error count: " + errorCount); // Wydrukuj liczbę błędów w konsoli
-                    errorLabel.setText("Błędy: " + errorCount); // Zaktualizuj etykietę błędów
+                    errorCount++; 
+                    errorLabel.setText("Błędy: " + errorCount); 
                 }
     
                 updateNumberButtonStates();
@@ -433,7 +429,23 @@ public class SudokuGameScreen extends JFrame {
     private int[][] generateSudoku(int difficultyLevel) {
         int[][] sudoku = new int[SIZE][SIZE];
         fillSudoku(sudoku, 0, 0);
-        removeCells(sudoku, getNumberOfCellsToKeep(21, 40));
+        removeCells(sudoku, getNumberOfCellsToKeep(difficultyLevel));
+        switch (difficultyLevel) {
+            case EASY:
+                difficultyLevelText = "Łatwy";
+                break;
+            case MEDIUM:
+                difficultyLevelText = "Średni";
+                break;
+            case HARD:
+                difficultyLevelText = "Trudny";
+                break;
+            case VERY_HARD:
+                difficultyLevelText = "Bardzo trudny";
+                break;
+            default:
+                difficultyLevelText = "Łatwy"; 
+        }
         return sudoku; 
     }
 
@@ -473,7 +485,21 @@ public class SudokuGameScreen extends JFrame {
         }
     }
 
-    private int getNumberOfCellsToKeep(int minCells, int maxCells) {
+    private int getNumberOfCellsToKeep(int difficultyLevel) {
+        switch (difficultyLevel) {
+            case EASY:
+                return getRandomCount(36, 46);
+            case MEDIUM:
+                return getRandomCount(32, 35);
+            case HARD:
+                return getRandomCount(28, 31);
+            case VERY_HARD:
+                return getRandomCount(17, 27);
+            default:
+                return getRandomCount(36, 46); // Default to easy
+        }
+    }
+    private int getRandomCount(int minCells, int maxCells) {
         Random random = new Random();
         return random.nextInt(maxCells - minCells + 1) + minCells;
     }
@@ -498,6 +524,10 @@ public class SudokuGameScreen extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.setColor(ColorPalette.TEXT_DARK_GREEN);
+            g.drawString(difficultyLevelText, 21, 161);
+
         }
     }
 }
