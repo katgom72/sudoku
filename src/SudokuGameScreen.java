@@ -66,7 +66,7 @@ public class SudokuGameScreen extends JFrame {
         }
 
 
-        sudokuBoard = generateSudoku(1);
+        sudokuBoard = generateSudoku(4);
         sudokuButtons = new JButton[SIZE][SIZE];
         originalValues = new boolean[SIZE][SIZE];
 
@@ -429,7 +429,7 @@ public class SudokuGameScreen extends JFrame {
     private int[][] generateSudoku(int difficultyLevel) {
         int[][] sudoku = new int[SIZE][SIZE];
         fillSudoku(sudoku, 0, 0);
-        removeCells(sudoku, getNumberOfCellsToKeep(difficultyLevel));
+        removeCells(sudoku, 81- getNumberOfCellsToKeep(difficultyLevel));
         switch (difficultyLevel) {
             case EASY:
                 difficultyLevelText = "Łatwy";
@@ -473,14 +473,14 @@ public class SudokuGameScreen extends JFrame {
         return true;
     }
 
-    private void removeCells(int[][] sudoku, int cellsToKeep) {
+    private void removeCells(int[][] sudoku, int cellsToRemove) {
         Random random = new Random();
-        while (cellsToKeep > 0) {
+        while (cellsToRemove > 0) {
             int row = random.nextInt(SIZE);
             int col = random.nextInt(SIZE);
             if (sudoku[row][col] != 0) {
                 sudoku[row][col] = 0;
-                cellsToKeep--;
+                cellsToRemove--;
             }
         }
     }
@@ -496,7 +496,7 @@ public class SudokuGameScreen extends JFrame {
             case VERY_HARD:
                 return getRandomCount(17, 27);
             default:
-                return getRandomCount(36, 46); // Default to easy
+                return getRandomCount(36, 46); 
         }
     }
     private int getRandomCount(int minCells, int maxCells) {
