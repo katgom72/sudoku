@@ -31,6 +31,11 @@ public class SudokuGameScreen extends JFrame {
 
     private ImageIcon notesIconActive;
     private ImageIcon notesIconInactive;
+
+    private long startTime;
+    private Timer timer;
+    private JLabel timerLabel;
+
     
 
 
@@ -239,15 +244,38 @@ public class SudokuGameScreen extends JFrame {
         }
         // Inicjalizacja etykiety błędów
         errorLabel = new JLabel("Błędy: 0"); 
-        errorLabel.setFont(new Font("Arial", Font.BOLD, 19)); 
+        errorLabel.setFont(new Font("Arial", Font.BOLD, 18)); 
         errorLabel.setForeground(ColorPalette.TEXT_DARK_GREEN); 
-        errorLabel.setBounds(180, 135, 400, 40); // Ustaw pozycję etykiety
+        errorLabel.setBounds(185, 135, 400, 40); // Ustaw pozycję etykiety
         layeredPane.add(errorLabel, Integer.valueOf(1)); // Dodaj etykietę do warstwy
+
+        // Inicjalizacja etykiety czasu
+        timerLabel = new JLabel("Czas: 0s");
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        timerLabel.setForeground(ColorPalette.TEXT_DARK_GREEN);
+        timerLabel.setBounds(287, 135, 200, 40); // Ustaw pozycję etykiety
+        layeredPane.add(timerLabel, Integer.valueOf(1)); // Dodaj etykietę do warstwy
+
+        // Ustawienie początkowego czasu i uruchomienie timera
+        startTime = System.currentTimeMillis();
+        timer = new Timer(1000, e -> updateTimer());
+        timer.start();
+
 
 
 
         
     }
+    private void updateTimer() {
+        long elapsedTime = System.currentTimeMillis() - startTime; // Oblicz czas w milisekundach
+        long seconds = (elapsedTime / 1000) % 60; // Oblicz sekundy
+        long minutes = (elapsedTime / (1000 * 60)) % 60; // Oblicz minuty
+        long hours = (elapsedTime / (1000 * 60 * 60)) % 24; // Oblicz godziny
+    
+        // Zaktualizuj etykietę
+        timerLabel.setText(String.format("Czas: %02d:%02d:%02d", hours, minutes, seconds));
+    }
+    
     private void countInitialNumbers() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -406,7 +434,7 @@ public class SudokuGameScreen extends JFrame {
         int[][] sudoku = new int[SIZE][SIZE];
         fillSudoku(sudoku, 0, 0);
         removeCells(sudoku, getNumberOfCellsToKeep(21, 40));
-        return sudoku;
+        return sudoku; 
     }
 
     private boolean fillSudoku(int[][] sudoku, int row, int col) {
