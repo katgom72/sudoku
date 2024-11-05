@@ -26,6 +26,8 @@ public class SudokuGameScreen extends JFrame {
     private int[] numberCount = new int[SIZE + 1]; 
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
+    private int errorCount = 0;
+    private JLabel errorLabel;
 
     private ImageIcon notesIconActive;
     private ImageIcon notesIconInactive;
@@ -235,6 +237,13 @@ public class SudokuGameScreen extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Settings image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        // Inicjalizacja etykiety błędów
+        errorLabel = new JLabel("Błędy: 0"); 
+        errorLabel.setFont(new Font("Arial", Font.BOLD, 19)); 
+        errorLabel.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        errorLabel.setBounds(180, 135, 400, 40); // Ustaw pozycję etykiety
+        layeredPane.add(errorLabel, Integer.valueOf(1)); // Dodaj etykietę do warstwy
+
 
 
         
@@ -342,25 +351,35 @@ public class SudokuGameScreen extends JFrame {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
             int col = lastHighlightedButton.getX() / 40;
-
+    
             if (!originalValues[row][col]) {
                 String currentText = lastHighlightedButton.getText();
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
-
+    
                 moveStack.push(new Move(row, col, currentValue));
-
+    
                 if (currentValue != 0) {
                     numberCount[currentValue]--;
                 }
-
+    
                 lastHighlightedButton.setText(String.valueOf(number));
                 lastHighlightedButton.setForeground(ColorPalette.TEXT_DARK_GREEN);
-
+    
                 numberCount[number]++;
+    
+                // Sprawdź, czy liczba jest prawidłowa
+                if (!isValid(sudokuBoard, row, col, number)) {
+                    errorCount++; // Zwiększ liczbę błędów, jeśli liczba jest nieprawidłowa
+                    System.out.println("Error count: " + errorCount); // Wydrukuj liczbę błędów w konsoli
+                    errorLabel.setText("Błędy: " + errorCount); // Zaktualizuj etykietę błędów
+                }
+    
                 updateNumberButtonStates();
             }
         }
     }
+    
+
 
     private void updateNumberButtonStates() {
         for (int i = 1; i <= SIZE; i++) {
