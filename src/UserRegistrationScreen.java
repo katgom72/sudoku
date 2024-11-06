@@ -37,15 +37,15 @@ public class UserRegistrationScreen extends JFrame {
             JOptionPane.showMessageDialog(this, "Image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        usernameField = createRoundedTextField(290);
-        pinField = createRoundedTextField(370);
-        ageField = createRoundedTextField(450);
-        countryField = createRoundedTextField(530);
-        starting_skill_levelField = createRoundedTextField(610);
+        usernameField = createRoundedTextField(260);
+        pinField = createRoundedTextField(340);
+        ageField = createRoundedTextField(420);
+        countryField = createRoundedTextField(500);
+        starting_skill_levelField = createRoundedTextField(580);
         ((PlainDocument) ageField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
         ((PlainDocument) pinField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
 
-        addButton("Zarejestruj", 665);
+        addButton("Zarejestruj", 650);
         
         setLocationRelativeTo(null); 
         setLayout(null); 
@@ -73,7 +73,6 @@ public class UserRegistrationScreen extends JFrame {
         button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button.setBorder(BorderFactory.createEmptyBorder());
 
-        // Zaokrąglone tło
         button.setContentAreaFilled(false);
         button.setOpaque(false);
         button.setUI(new RoundedButtonUI());
@@ -90,18 +89,7 @@ public class UserRegistrationScreen extends JFrame {
                 button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
-        // Sprawdzenie, czy nazwa użytkownika jest dłuższa niż 3 znaki
-        button.addActionListener(e -> {
-            String username = usernameField.getText().trim(); 
-            if (username.length() <= 3) {
-                JOptionPane.showMessageDialog(this, "Nazwa użytkownika musi mieć więcej niż 3 znaki.", "Błąd rejestracji", JOptionPane.ERROR_MESSAGE);
-            } else {
-                // Możesz dodać dalszą logikę rejestracji tutaj, jeśli nazwa jest poprawna
-                JOptionPane.showMessageDialog(this, "Rejestracja udana!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
-                // Możesz zamknąć okno po udanej rejestracji, np.:
-                // dispose();
-            }
-        });
+        
 
         add(button);
     }
@@ -110,13 +98,13 @@ public class UserRegistrationScreen extends JFrame {
     private class NumberOnlyFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-            if (string.matches("\\d+")) { // Akceptuj tylko cyfry
+            if (string.matches("\\d+")) { 
                 super.insertString(fb, offset, string, attr);
             }
         }
         @Override
         public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            if (text.matches("\\d+")) { // Akceptuj tylko cyfry
+            if (text.matches("\\d+")) { 
                 super.replace(fb, offset, length, text, attrs);
             }
         }
@@ -129,7 +117,6 @@ public class UserRegistrationScreen extends JFrame {
             screen.setVisible(true);
         });
     }
-    // Klasa do tworzenia zaokrąglonych obramowań
     private static class RoundedBorder extends AbstractBorder {
         private final int radius;
         private final Color borderColor;
@@ -144,7 +131,6 @@ public class UserRegistrationScreen extends JFrame {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Obramowanie
             g2.setColor(borderColor);
             g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
         }
@@ -185,11 +171,11 @@ public class UserRegistrationScreen extends JFrame {
             g.setFont(new Font("Arial", Font.BOLD, 20));
             g.setColor(ColorPalette.TEXT_LIGHT_GREEN);
 
-            g.drawString(text2, 116, 280);
-            g.drawString(text1, 190, 360);
-            g.drawString(text3, 185, 440);
-            g.drawString(text4, 185, 520);
-            g.drawString(text5, 70, 600); 
+            g.drawString(text2, 116, 250);
+            g.drawString(text1, 190, 330);
+            g.drawString(text3, 185, 410);
+            g.drawString(text4, 185, 490);
+            g.drawString(text5, 70, 570); 
         }
     }
 }
