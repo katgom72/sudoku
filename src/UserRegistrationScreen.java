@@ -13,16 +13,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-
 public class UserRegistrationScreen extends JFrame {
 
     private JTextField usernameField;
     private JTextField ageField;
-    private JTextField countryField;
-    private JTextField starting_skill_levelField;
     private JTextField pinField;
 
+    private JLabel error1Label;
+    private JLabel error2Label;
+    private JLabel error3Label;
+    private JLabel error4Label; 
 
+
+    private ButtonGroup skillLevelGroup;
 
     public UserRegistrationScreen() {
         setSize(432, 768); 
@@ -38,18 +41,124 @@ public class UserRegistrationScreen extends JFrame {
         }
 
         usernameField = createRoundedTextField(260);
-        pinField = createRoundedTextField(340);
+        pinField = createPasswordField(340);
         ageField = createRoundedTextField(420);
-        countryField = createRoundedTextField(500);
-        starting_skill_levelField = createRoundedTextField(580);
         ((PlainDocument) ageField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
         ((PlainDocument) pinField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+
+        error1Label = new JLabel("Nazwa użytkownika musi mieć więcej niż 3 znaki.");
+        error1Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error1Label.setForeground(Color.RED);
+        error1Label.setBounds(65, 290, 550, 30);
+        error1Label.setVisible(false); 
+        add(error1Label);
+
+        error2Label = new JLabel("PIN musi zawierać dokładnie 4 cyfry.");
+        error2Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error2Label.setForeground(Color.RED);
+        error2Label.setBounds(100, 370, 550, 30);
+        error2Label.setVisible(false);
+        add(error2Label);
+
+        error3Label = new JLabel("Wiek musi być liczbą z zakresu 1 do 150.");
+        error3Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error3Label.setForeground(Color.RED);
+        error3Label.setBounds(85, 450, 550, 30);
+        error3Label.setVisible(false); 
+        add(error3Label);
+
+        error4Label = new JLabel("Wybierz twój poziom umiejętności gry Sudoku");
+        error4Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error4Label.setForeground(Color.RED);
+        error4Label.setBounds(70, 610, 550, 30);
+        error4Label.setVisible(false); 
+        add(error4Label);
+
+
+        addSkillLevelRadioButtons(510); 
+
 
         addButton("Zarejestruj", 650);
         
         setLocationRelativeTo(null); 
         setLayout(null); 
     }
+    
+    private void addSkillLevelRadioButtons(int y) {
+        JRadioButton beginnerButton = new JRadioButton("Początkujący");
+        JRadioButton intermediateButton = new JRadioButton("Średniozaawansowany");
+        JRadioButton advancedButton = new JRadioButton("Zaawansowany");
+        JRadioButton expertButton = new JRadioButton("Ekspert");
+    
+        beginnerButton.setBounds(100, y, 200, 20);
+        intermediateButton.setBounds(100, y + 25, 300, 20);
+        advancedButton.setBounds(100, y + 50, 300, 20);
+        expertButton.setBounds(100, y + 75, 200, 20);
+    
+        beginnerButton.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        beginnerButton.setFont(new Font("Arial", Font.BOLD, 17));
+        intermediateButton.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        intermediateButton.setFont(new Font("Arial", Font.BOLD, 17));
+        advancedButton.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        advancedButton.setFont(new Font("Arial", Font.BOLD, 17));
+        expertButton.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        expertButton.setFont(new Font("Arial", Font.BOLD, 17));
+    
+        beginnerButton.setFocusPainted(false);
+        intermediateButton.setFocusPainted(false);
+        advancedButton.setFocusPainted(false);
+        expertButton.setFocusPainted(false);
+    
+        beginnerButton.setContentAreaFilled(false);
+        intermediateButton.setContentAreaFilled(false);
+        advancedButton.setContentAreaFilled(false);
+        expertButton.setContentAreaFilled(false);
+    
+        Icon unselectedIcon = createRadioButtonIcon(ColorPalette.LIGHT_PINK_COLOR); 
+        Icon selectedIcon = createRadioButtonIcon(ColorPalette.LOGO_COLOR); 
+
+        beginnerButton.setIcon(unselectedIcon);
+        intermediateButton.setIcon(unselectedIcon);
+        advancedButton.setIcon(unselectedIcon);
+        expertButton.setIcon(unselectedIcon);
+    
+        beginnerButton.setSelectedIcon(selectedIcon);
+        intermediateButton.setSelectedIcon(selectedIcon);
+        advancedButton.setSelectedIcon(selectedIcon);
+        expertButton.setSelectedIcon(selectedIcon);
+    
+        beginnerButton.setOpaque(false);
+        intermediateButton.setOpaque(false);
+        advancedButton.setOpaque(false);
+        expertButton.setOpaque(false);
+    
+        skillLevelGroup = new ButtonGroup();
+        skillLevelGroup.add(beginnerButton);
+        skillLevelGroup.add(intermediateButton);
+        skillLevelGroup.add(advancedButton);
+        skillLevelGroup.add(expertButton);
+
+        add(beginnerButton);
+        add(intermediateButton);
+        add(advancedButton);
+        add(expertButton);
+  
+    }
+    
+    
+    // Metoda tworząca niestandardową ikonę dla przycisku radiowego
+    private Icon createRadioButtonIcon(Color color) {
+        int size = 20;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(color);
+        g2d.fillOval(2, 2, size - 4, size - 4);
+        g2d.dispose();
+        return new ImageIcon(image);
+    }
+    
+    
 
     private JTextField createRoundedTextField(int y) {
         JTextField textField = new JTextField();
@@ -62,6 +171,18 @@ public class UserRegistrationScreen extends JFrame {
         textField.setBorder(new RoundedBorder(10, ColorPalette.TEXT_DARK_GREEN));
         add(textField);
         return textField;
+    }
+    private JPasswordField createPasswordField(int y) {  
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBounds(100, y, 230, 38);
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 15));
+        passwordField.setForeground(ColorPalette.TEXT_DARK_GREEN);
+        passwordField.setBackground(ColorPalette.HIGHLIGHT_COLOR);
+        passwordField.setOpaque(true);
+
+        passwordField.setBorder(new RoundedBorder(10, ColorPalette.TEXT_DARK_GREEN));
+        add(passwordField);
+        return passwordField;
     }
 
     private void addButton(String text, int yPosition) {
@@ -89,6 +210,40 @@ public class UserRegistrationScreen extends JFrame {
                 button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
+        button.addActionListener(e -> {
+            String username = usernameField.getText().trim();
+            String pin = pinField.getText().trim();
+            String age = ageField.getText().trim();
+
+
+            if (username.length() <= 3) {
+                error1Label.setVisible(true); 
+            } else {
+                error1Label.setVisible(false); 
+
+            }
+
+            if (!pin.matches("\\d{4}")) {
+                error2Label.setVisible(true); 
+            } else {
+                error2Label.setVisible(false); 
+
+            }
+
+            if (!age.matches("\\d{1,3}") || Integer.parseInt(age) < 1 || Integer.parseInt(age) > 150) {
+                error3Label.setVisible(true);
+    
+            } else {
+                error3Label.setVisible(false);
+            }
+
+            if (skillLevelGroup.getSelection() == null) {
+                error4Label.setVisible(true);
+            } else {
+                error4Label.setVisible(false);
+            }
+        });
+
         
 
         add(button);
@@ -164,7 +319,6 @@ public class UserRegistrationScreen extends JFrame {
             String text1 = "PIN:";
             String text2 = "Nazwa użytkownika:";
             String text3 = "Wiek:";
-            String text4 = "Kraj:";
             String text5 = "Twój poziom umiejętności gry:";
 
             int y = 340; 
@@ -174,8 +328,8 @@ public class UserRegistrationScreen extends JFrame {
             g.drawString(text2, 116, 250);
             g.drawString(text1, 190, 330);
             g.drawString(text3, 185, 410);
-            g.drawString(text4, 185, 490);
-            g.drawString(text5, 70, 570); 
+            g.drawString(text5, 70, 490);
         }
     }
+    
 }
