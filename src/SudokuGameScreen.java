@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import java.util.Stack;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 
@@ -43,7 +44,6 @@ public class SudokuGameScreen extends JFrame {
     private String difficultyLevelText;
 
 
-
     public SudokuGameScreen() {
         setSize(432, 768);
         setResizable(false);
@@ -66,7 +66,7 @@ public class SudokuGameScreen extends JFrame {
         }
 
 
-        sudokuBoard = generateSudoku(4);
+        sudokuBoard = generateSudoku(2);
         sudokuButtons = new JButton[SIZE][SIZE];
         originalValues = new boolean[SIZE][SIZE];
 
@@ -237,6 +237,9 @@ public class SudokuGameScreen extends JFrame {
             settingsButton.setBorderPainted(false);
             settingsButton.setOpaque(false);
 
+            settingsButton.addActionListener(e -> openSettingsDialog());
+
+
 
             layeredPane.add(settingsButton, Integer.valueOf(2));
 
@@ -247,6 +250,7 @@ public class SudokuGameScreen extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Settings image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
         errorLabel = new JLabel("Błędy: 0"); 
         errorLabel.setFont(new Font("Arial", Font.BOLD, 18)); 
         errorLabel.setForeground(ColorPalette.TEXT_DARK_GREEN); 
@@ -264,11 +268,126 @@ public class SudokuGameScreen extends JFrame {
         timer.start();
 
 
-
-
-        
     }
-    private void updateTimer() {
+    private void openSettingsDialog() {
+        // Tworzenie okna dialogowego
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Ustawienia");
+    
+        // Ustawienie tła
+        JPanel panel = new JPanel();
+        panel.setBackground(ColorPalette.BACKGROUND_COLOR);
+    
+        // Ustawienie układu FlowLayout w pionie
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Przesunięcie w pionie i poziomie
+    
+        // Tworzenie przycisków
+        JButton button1 = new JButton("Zacznij od nowa");
+        JButton button2 = new JButton("Nowa gra");
+        JButton button3 = new JButton("Zmień kolorystykę");
+    
+        // Ustawienie stałego rozmiaru przycisków
+        button1.setPreferredSize(new Dimension(300, 60));
+        button2.setPreferredSize(new Dimension(300, 60));
+        button3.setPreferredSize(new Dimension(300, 60));
+    
+        // Ustawienie stylu przycisków
+        button1.setFont(new Font("Arial", Font.BOLD, 20));
+        button1.setFocusPainted(false);
+        button1.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button1.setBorder(BorderFactory.createEmptyBorder());
+    
+        // Zaokrąglone tło
+        button1.setContentAreaFilled(false);
+        button1.setOpaque(false);
+        button1.setUI(new RoundedButtonUI());
+
+
+        // Ustawienie stylu przycisków
+        button2.setFont(new Font("Arial", Font.BOLD, 20));
+        button2.setFocusPainted(false);
+        button2.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button2.setBorder(BorderFactory.createEmptyBorder());
+    
+        // Zaokrąglone tło
+        button2.setContentAreaFilled(false);
+        button2.setOpaque(false);
+        button2.setUI(new RoundedButtonUI());
+
+
+        // Ustawienie stylu przycisków
+        button3.setFont(new Font("Arial", Font.BOLD, 20));
+        button3.setFocusPainted(false);
+        button3.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button3.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button3.setBorder(BorderFactory.createEmptyBorder());
+    
+        // Zaokrąglone tło
+        button3.setContentAreaFilled(false);
+        button3.setOpaque(false);
+        button3.setUI(new RoundedButtonUI());
+
+        // Podświetlenie przy kliknięciu
+        button1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button1.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+        // Podświetlenie przy kliknięciu
+        button2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button2.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+        // Podświetlenie przy kliknięciu
+        button3.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button3.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button3.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+    
+        // Dodanie przycisków do panelu
+        panel.add(button1);
+        panel.add(button2);
+        panel.add(button3);
+    
+        // Dodanie panelu do okna dialogowego
+        dialog.add(panel);
+    
+        // Ustawienie rozmiaru okna dialogowego
+        dialog.setSize(370, 250);  // Zwiększono rozmiar okna dla lepszego widoku
+    
+        // Ustawienie zamknięcia okna
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+        // Wyświetlenie okna na środku ekranu
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+    
+
+    
+    private void updateTimer() { 
         long elapsedTime = System.currentTimeMillis() - startTime; 
         long seconds = (elapsedTime / 1000) % 60;
         long minutes = (elapsedTime / (1000 * 60)) % 60;

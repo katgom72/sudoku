@@ -321,7 +321,6 @@ public class UserRegistrationScreen extends JFrame {
             String text3 = "Wiek:";
             String text5 = "Twój poziom umiejętności gry:";
 
-            int y = 340; 
             g.setFont(new Font("Arial", Font.BOLD, 20));
             g.setColor(ColorPalette.TEXT_LIGHT_GREEN);
 
