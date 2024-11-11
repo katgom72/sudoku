@@ -6,7 +6,9 @@ import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 import javax.crypto.SecretKey;
@@ -15,7 +17,12 @@ import javax.imageio.ImageIO;
 import javax.swing.text.AttributeSet;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.FileWriter;
 
 
@@ -28,6 +35,7 @@ public class UserRegistrationScreen extends JFrame {
     private JLabel error1Label;
     private JLabel error2Label;
     private JLabel error4Label;
+    private JLabel error5Label;
 
     private ButtonGroup skillLevelGroup;
 
@@ -69,6 +77,13 @@ public class UserRegistrationScreen extends JFrame {
         error4Label.setBounds(70, 535, 550, 30);
         error4Label.setVisible(false); 
         add(error4Label);
+
+        error5Label = new JLabel("Użytkownik o tej nazwie już istnieje");
+        error5Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error5Label.setForeground(Color.RED);
+        error5Label.setBounds(105, 290, 550, 30);
+        error5Label.setVisible(false); 
+        add(error5Label);
 
 
         addSkillLevelRadioButtons(430); 
@@ -217,6 +232,7 @@ public class UserRegistrationScreen extends JFrame {
             String username = usernameField.getText().trim();
             String pin = pinField.getText().trim();
             String skillLevel = null;
+            error5Label.setVisible(false);
         
             if (skillLevelGroup.getSelection() != null) {
                 skillLevel = skillLevelGroup.getSelection().getActionCommand();
@@ -245,16 +261,46 @@ public class UserRegistrationScreen extends JFrame {
             } else {
                 error4Label.setVisible(false);
             }
-        
-            if (valid) {
-                saveToJSON(username, pin, skillLevel);
+            if(valid){
+                saveUserData(username, EncryptionUtils.hashPin(pin), skillLevel);
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuMenu menuScreen = new SudokuMenu(username); 
+                    menuScreen.setVisible(true); 
+                });
             }
+
         });
         
-
-        
-
         add(button);
+    }
+    private void saveUserData(String username, String pinHash, String skillLevel) {
+        JSONObject userData = new JSONObject();
+        userData.put("username", username);
+        userData.put("pin", pinHash);  // Haszowany PIN
+        userData.put("skillLevel", skillLevel);
+
+        // Wczytanie istniejącego pliku JSON
+        File file = new File("registration_data.json");
+        JSONArray usersArray = new JSONArray();
+        if (file.exists()) {
+            try (FileReader reader = new FileReader(file)) {
+                JSONTokener tokener = new JSONTokener(reader);
+                usersArray = new JSONArray(tokener);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Dodanie nowego użytkownika
+        usersArray.put(userData);
+
+        // Zapisanie pliku JSON
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(usersArray.toString(4));  // Zapisz z wcięciami
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     private void addButton2(String text, int yPosition) {
         JButton button = new JButton(text);
@@ -292,31 +338,6 @@ public class UserRegistrationScreen extends JFrame {
 
         add(button);
     }
-
-    private void saveToJSON(String username, String pin, String skillLevel) {
-    try {
-        SecretKey key = EncryptionUtils.generateKey();
-        IvParameterSpec iv = EncryptionUtils.generateIv();
-
-        String encryptedPin = EncryptionUtils.encrypt(pin, key, iv);
-
-        JSONObject userJson = new JSONObject();
-        userJson.put("username", username);
-        userJson.put("encryptedPin", encryptedPin);
-        userJson.put("iv", Base64.getEncoder().encodeToString(iv.getIV())); 
-        userJson.put("skillLevel", skillLevel);
-
-        try (FileWriter file = new FileWriter("registration_data.json")) {
-            file.write(userJson.toString(4));
-            file.flush();
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Błąd zapisu do pliku JSON.", "Błąd", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-    
 
     private class NumberOnlyFilter extends DocumentFilter {
         @Override

@@ -1,18 +1,40 @@
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Map;
+
+import javax.crypto.spec.IvParameterSpec;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.AbstractBorder;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.text.AttributeSet;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 
 public class UserLoginScreen extends JFrame {
@@ -22,9 +44,7 @@ public class UserLoginScreen extends JFrame {
 
     private JLabel error1Label;
     private JLabel error2Label;
-    private JLabel error4Label;
 
-    private ButtonGroup skillLevelGroup;
 
     public UserLoginScreen() {
         setSize(432, 768); 
@@ -40,33 +60,31 @@ public class UserLoginScreen extends JFrame {
         }
 
         usernameField = createRoundedTextField(390);
-        pinField = createPasswordField(460);
+        pinField = createPasswordField(470);
         ((PlainDocument) pinField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
 
-        error1Label = new JLabel("Nazwa użytkownika musi mieć więcej niż 3 znaki.");
+        error1Label = new JLabel("Nazwa użytkownika niepoprawna");
         error1Label.setFont(new Font("Arial", Font.PLAIN, 14));
         error1Label.setForeground(Color.RED);
-        error1Label.setBounds(65, 290, 550, 30);
+        error1Label.setBounds(110, 420, 550, 30);
         error1Label.setVisible(false); 
         add(error1Label);
 
-        error2Label = new JLabel("PIN musi zawierać dokładnie 4 cyfry.");
+        error2Label = new JLabel("PIN niepoprawny");
         error2Label.setFont(new Font("Arial", Font.PLAIN, 14));
         error2Label.setForeground(Color.RED);
-        error2Label.setBounds(100, 370, 550, 30);
+        error2Label.setBounds(160, 500, 550, 30);
         error2Label.setVisible(false);
         add(error2Label);
 
 
-        addButton2("Zarejestruj się", 580);
-        addButton("Zaloguj", 520);
+        addButton2("Zarejestruj się", 590);
+        addButton("Zaloguj", 530);
         
         setLocationRelativeTo(null); 
         setLayout(null); 
     }
-
-    
-    
+ 
 
     private JTextField createRoundedTextField(int y) {
         JTextField textField = new JTextField();
@@ -120,12 +138,6 @@ public class UserLoginScreen extends JFrame {
         button.addActionListener(e -> {
             String username = usernameField.getText().trim();
             String pin = pinField.getText().trim();
-            String skillLevel = null;
-        
-            if (skillLevelGroup.getSelection() != null) {
-                skillLevel = skillLevelGroup.getSelection().getActionCommand();
-            }
-        
             boolean valid = true;
         
             if (username.length() <= 3) {
@@ -141,24 +153,45 @@ public class UserLoginScreen extends JFrame {
             } else {
                 error2Label.setVisible(false);
             }
-        
-        
-            if (skillLevel == null) {
-                error4Label.setVisible(true);
-                valid = false;
-            } else {
-                error4Label.setVisible(false);
-            }
-        
             if (valid) {
+                if (verifyPin(username, pin)){
+                    dispose(); 
+                    SwingUtilities.invokeLater(() -> {
+                        SudokuMenu menuScreen = new SudokuMenu(username); 
+                        menuScreen.setVisible(true); 
+                    });
+                }else{
+                    error2Label.setVisible(true);
+                    error1Label.setVisible(true);
+                }
             }
+        
         });
         
-
-        
-
         add(button);
     }
+    public boolean verifyPin(String username, String inputPin) {
+        try (FileReader reader = new FileReader("registration_data.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+                String storedPinHash = user.getString("pin");
+
+                if (storedUsername.equals(username)) {
+                    // Sprawdzanie hasła
+                    String inputPinHash = EncryptionUtils.hashPin(inputPin);
+                    return storedPinHash.equals(inputPinHash);  // Porównaj hasze
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private void addButton2(String text, int yPosition) {
         JButton button = new JButton(text);
         button.setBounds(90, yPosition, 250, 50);
@@ -192,14 +225,10 @@ public class UserLoginScreen extends JFrame {
         });
         
 
-        
-
         add(button);
     }
-
     
 
-    
 
     private class NumberOnlyFilter extends DocumentFilter {
         @Override
@@ -274,7 +303,7 @@ public class UserLoginScreen extends JFrame {
             g.setColor(ColorPalette.TEXT_LIGHT_GREEN);
 
             g.drawString(text2, 116, 380);
-            g.drawString(text1, 190, 450);
+            g.drawString(text1, 190, 460);
         }
     }
     

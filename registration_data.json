@@ -1,6 +1,7 @@
-{
-    "encryptedPin": "3/hc3Ayo5vc3zrAVgjLGgQ==",
-    "iv": "e8U2Etz7rCxND/3l0yCIQQ==",
-    "skillLevel": "Średniozaawansowany",
-    "username": "kasia"
-}
+[
+    {
+        "pin": "edee29f882543b956620b26d0ee0e7e950399b1c4222f5de05e06425b4c995e9",
+        "skillLevel": "Zaawansowany",
+        "username": "user2"
+    }
+]

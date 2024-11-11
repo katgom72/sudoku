@@ -66,7 +66,7 @@ public class SudokuGameScreen extends JFrame {
         }
 
 
-        sudokuBoard = generateSudoku(2);
+        sudokuBoard = generateSudoku(1);
         sudokuButtons = new JButton[SIZE][SIZE];
         originalValues = new boolean[SIZE][SIZE];
 

@@ -11,8 +11,10 @@ import javax.imageio.ImageIO;
 
 
 public class SudokuMenu extends JFrame {
+    private String username;
 
-    public SudokuMenu() {
+    public SudokuMenu(String username) {
+        this.username = username;
         setSize(432, 768);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,7 +69,7 @@ public class SudokuMenu extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuMenu screen = new SudokuMenu();
+            SudokuMenu screen = new SudokuMenu("username");
             screen.setVisible(true);
         });
     }
