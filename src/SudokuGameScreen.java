@@ -397,6 +397,7 @@ public class SudokuGameScreen extends JFrame {
             }
         }
         updateNumberButtonStates();
+        
     }
 
     private class Move {
@@ -532,11 +533,20 @@ public class SudokuGameScreen extends JFrame {
         if (currentValue != number) {
             moveStack.push(new Move(row, col, currentValue));
         }
+        if (currentValue != 0) {
+            numberCount[currentValue]--;
+        }
     
         button.setText(String.valueOf(number));
         button.setFont(new Font("Arial", Font.BOLD, 24));
         button.setForeground(ColorPalette.TEXT_DARK_GREEN);
+        
+        numberCount[number]++;
     
+        if (!isValid(sudokuBoard, row, col, number)) {
+            errorCount++; 
+            errorLabel.setText("Błędy: " + errorCount); 
+        }
         updateNumberButtonStates();
     }
     
