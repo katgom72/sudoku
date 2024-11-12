@@ -30,14 +30,14 @@ public class SudokuMenu extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
         
-        addButton("Poziom 1", 255);
-        addButton("Jak grać?", 325);
-        addButton("Statystyki", 395);
-        addButton("Taktyki", 465);
-        addButton("O aplikacji", 535);
+        addButton("Poziom 1", 255,1);
+        addButton("Jak grać?", 325,2);
+        addButton("Statystyki", 395,3);
+        addButton("Taktyki", 465,4);
+        addButton("O aplikacji", 535,5);
     }
 
-    private void addButton(String text, int yPosition) {
+    private void addButton(String text, int yPosition, int numer) {
         JButton button = new JButton(text);
         button.setBounds(66, yPosition, 300, 60);
         button.setFont(new Font("Arial", Font.BOLD, 20));
@@ -62,6 +62,16 @@ public class SudokuMenu extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
+        });
+        button.addActionListener(e -> {
+            if (numer==1){
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
+                    gameScreen.setVisible(true); 
+                });
+            }
+        
         });
 
         add(button);

@@ -12,10 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Map;
-
-import javax.crypto.spec.IvParameterSpec;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -181,9 +177,8 @@ public class UserLoginScreen extends JFrame {
                 String storedPinHash = user.getString("pin");
 
                 if (storedUsername.equals(username)) {
-                    // Sprawdzanie hasła
                     String inputPinHash = EncryptionUtils.hashPin(inputPin);
-                    return storedPinHash.equals(inputPinHash);  // Porównaj hasze
+                    return storedPinHash.equals(inputPinHash);  
                 }
             }
         } catch (IOException e) {

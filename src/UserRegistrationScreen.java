@@ -277,7 +277,7 @@ public class UserRegistrationScreen extends JFrame {
     private void saveUserData(String username, String pinHash, String skillLevel) {
         JSONObject userData = new JSONObject();
         userData.put("username", username);
-        userData.put("pin", pinHash);  // Haszowany PIN
+        userData.put("pin", pinHash);   
         userData.put("skillLevel", skillLevel);
 
         // Wczytanie istniejącego pliku JSON

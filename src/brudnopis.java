@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +27,7 @@ public class SudokuGameScreen extends JFrame {
     private int[] numberCount = new int[SIZE + 1]; 
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
-    private List<Integer>[][] notes = new List[SIZE][SIZE];
+    private List<Integer>[][] notes;
 
     private int errorCount = 0;
     private JLabel errorLabel;
@@ -112,13 +111,6 @@ public class SudokuGameScreen extends JFrame {
             }
         }
         layeredPane.add(sudokuPanel, Integer.valueOf(1));
-
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                notes[i][j] = new java.util.ArrayList<>();
-            }
-        }
-        
 
         // Panel przycisków numerycznych
         JPanel numberPanel = new JPanel(new GridLayout(1, 9, 5, 5));
@@ -282,53 +274,66 @@ public class SudokuGameScreen extends JFrame {
 
     }
     private void openSettingsDialog() {
+        // Tworzenie okna dialogowego
         JDialog dialog = new JDialog();
         dialog.setTitle("Ustawienia");
     
+        // Ustawienie tła
         JPanel panel = new JPanel();
         panel.setBackground(ColorPalette.BACKGROUND_COLOR);
     
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); 
+        // Ustawienie układu FlowLayout w pionie
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Przesunięcie w pionie i poziomie
     
+        // Tworzenie przycisków
         JButton button1 = new JButton("Zacznij od nowa");
         JButton button2 = new JButton("Nowa gra");
         JButton button3 = new JButton("Zmień kolorystykę");
     
+        // Ustawienie stałego rozmiaru przycisków
         button1.setPreferredSize(new Dimension(300, 60));
         button2.setPreferredSize(new Dimension(300, 60));
         button3.setPreferredSize(new Dimension(300, 60));
     
+        // Ustawienie stylu przycisków
         button1.setFont(new Font("Arial", Font.BOLD, 20));
         button1.setFocusPainted(false);
         button1.setForeground(ColorPalette.TEXT_DARK_GREEN); 
         button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button1.setBorder(BorderFactory.createEmptyBorder());
     
+        // Zaokrąglone tło
         button1.setContentAreaFilled(false);
         button1.setOpaque(false);
         button1.setUI(new RoundedButtonUI());
 
+
+        // Ustawienie stylu przycisków
         button2.setFont(new Font("Arial", Font.BOLD, 20));
         button2.setFocusPainted(false);
         button2.setForeground(ColorPalette.TEXT_DARK_GREEN); 
         button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button2.setBorder(BorderFactory.createEmptyBorder());
     
+        // Zaokrąglone tło
         button2.setContentAreaFilled(false);
         button2.setOpaque(false);
         button2.setUI(new RoundedButtonUI());
 
 
+        // Ustawienie stylu przycisków
         button3.setFont(new Font("Arial", Font.BOLD, 20));
         button3.setFocusPainted(false);
         button3.setForeground(ColorPalette.TEXT_DARK_GREEN); 
         button3.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button3.setBorder(BorderFactory.createEmptyBorder());
     
+        // Zaokrąglone tło
         button3.setContentAreaFilled(false);
         button3.setOpaque(false);
         button3.setUI(new RoundedButtonUI());
 
+        // Podświetlenie przy kliknięciu
         button1.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -340,6 +345,7 @@ public class SudokuGameScreen extends JFrame {
                 button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
+        // Podświetlenie przy kliknięciu
         button2.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -351,6 +357,7 @@ public class SudokuGameScreen extends JFrame {
                 button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
+        // Podświetlenie przy kliknięciu
         button3.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -363,16 +370,21 @@ public class SudokuGameScreen extends JFrame {
             }
         });
     
+        // Dodanie przycisków do panelu
         panel.add(button1);
         panel.add(button2);
         panel.add(button3);
     
+        // Dodanie panelu do okna dialogowego
         dialog.add(panel);
     
-        dialog.setSize(370, 250); 
+        // Ustawienie rozmiaru okna dialogowego
+        dialog.setSize(370, 250);  // Zwiększono rozmiar okna dla lepszego widoku
     
+        // Ustawienie zamknięcia okna
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
+        // Wyświetlenie okna na środku ekranu
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
@@ -402,13 +414,11 @@ public class SudokuGameScreen extends JFrame {
     private class Move {
         int row, col, previousValue;
 
-
         public Move(int row, int col, int previousValue) {
             this.row = row;
             this.col = col;
             this.previousValue = previousValue;
         }
-
     }
     private void undoLastMove() {
         if (!moveStack.isEmpty()) {
@@ -439,10 +449,6 @@ public class SudokuGameScreen extends JFrame {
             int col = lastHighlightedButton.getX() / 40;
     
             if (!originalValues[row][col]) {
-                if (isNotesActiveInCell(row, col)) {
-                    clearNotesInCell(row, col); 
-                }
-    
                 String currentText = lastHighlightedButton.getText();
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
@@ -457,7 +463,7 @@ public class SudokuGameScreen extends JFrame {
                 updateNumberButtonStates();
             }
         }
-    }    
+    }
     
 
 
@@ -491,93 +497,36 @@ public class SudokuGameScreen extends JFrame {
     
 
     private void handleNumberButtonClick(int number) {
-        JButton selectedButton = lastHighlightedButton;
-        if (selectedButton == null) return;
+        if (lastHighlightedButton != null) {
+            int row = lastHighlightedButton.getY() / 40;
+            int col = lastHighlightedButton.getX() / 40;
     
-        int row = -1, col = -1;
-        outerLoop:
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                if (sudokuButtons[i][j] == selectedButton) {
-                    row = i;
-                    col = j;
-                    break outerLoop;
+            if (!originalValues[row][col]) {
+                String currentText = lastHighlightedButton.getText();
+                int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+    
+                moveStack.push(new Move(row, col, currentValue));
+    
+                if (currentValue != 0) {
+                    numberCount[currentValue]--;
                 }
-            }
-        }
     
-        if (notesModeActive) {
-            if (notes[row][col].contains(number)) {
-                notes[row][col].remove(Integer.valueOf(number));
-            } else {
-                notes[row][col].add(number);
+                lastHighlightedButton.setText(String.valueOf(number));
+                lastHighlightedButton.setForeground(ColorPalette.TEXT_DARK_GREEN);
+    
+                numberCount[number]++;
+    
+                if (!isValid(sudokuBoard, row, col, number)) {
+                    errorCount++; 
+                    errorLabel.setText("Błędy: " + errorCount); 
+                }
+    
+                updateNumberButtonStates();
             }
-            
-            displayNotesInCell(row, col);
-        } else {
-            placeNumberInCell(row, col, number);
         }
     }
-    private void placeNumberInCell(int row, int col, int number) {
-        if (originalValues[row][col]) return; 
     
-        JButton button = sudokuButtons[row][col];
 
-        if (isNotesActiveInCell(row, col)) {
-            clearNotesInCell(row, col);
-        }
-
-        String currentText = button.getText();
-        int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
-        if (currentValue != number) {
-            moveStack.push(new Move(row, col, currentValue));
-        }
-    
-        button.setText(String.valueOf(number));
-        button.setFont(new Font("Arial", Font.BOLD, 24));
-        button.setForeground(ColorPalette.TEXT_DARK_GREEN);
-    
-        updateNumberButtonStates();
-    }
-    
-    private void displayNotesInCell(int row, int col) {
-        JButton button = sudokuButtons[row][col];
-        List<Integer> cellNotes = notes[row][col];
-    
-        StringBuilder sb = new StringBuilder("<html><pre>");
-    
-        for (int i = 1; i <= 9; i++) {
-            if (cellNotes.contains(i)) {
-                sb.append(i); 
-            } else {
-                sb.append(" "); 
-            }
-    
-           
-            if (i % 3 == 0) {
-                sb.append("<br>");
-            } else {
-                sb.append(" ");
-            }
-        }
-    
-        sb.append("</center></html>");
-    
-        button.setText(sb.toString());
-        button.setFont(new Font("Arial", Font.PLAIN, 10)); 
-    }
-    
-    
-    private boolean isNotesActiveInCell(int row, int col) {
-        return notes[row][col] != null && !notes[row][col].isEmpty();
-    }
-    private void clearNotesInCell(int row, int col) {
-        notes[row][col].clear();
-        
-        JButton button = sudokuButtons[row][col];
-        button.setText(""); 
-    }
-    
 
     private void updateNumberButtonStates() {
         for (int i = 1; i <= SIZE; i++) {
