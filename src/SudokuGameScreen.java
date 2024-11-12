@@ -565,6 +565,7 @@ public class SudokuGameScreen extends JFrame {
     
         button.setText(sb.toString());
         button.setFont(new Font("Arial", Font.PLAIN, 10)); 
+        button.setForeground(ColorPalette.TEXT_DARK_GREEN);
     }
     
     
