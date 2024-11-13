@@ -110,7 +110,7 @@ public class EndGameScreen extends JFrame{
                 if (numer==1){
                     dispose(); 
                     SwingUtilities.invokeLater(() -> {
-                        SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
+                        SudokuMenu gameScreen = new SudokuMenu(username); 
                         gameScreen.setVisible(true); 
                     });
                 }
