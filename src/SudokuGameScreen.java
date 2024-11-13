@@ -558,8 +558,14 @@ public class SudokuGameScreen extends JFrame {
             if(numberCount[i]!=9){
                 break;
             }
-            if (i==9 && numberCount[i]==9){
-                saveGameData(username, errorCount, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+            if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka 
+                long solveTime = System.currentTimeMillis() - startTime;
+                saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    EndGameScreen endGameScreen = new EndGameScreen(username,difficultyLevelText,solveTime,errorCount); 
+                    endGameScreen.setVisible(true); 
+                });
             }
         }
 
@@ -570,15 +576,25 @@ public class SudokuGameScreen extends JFrame {
         }
         updateNumberButtonStates();
     }
-    public void saveGameData(String username, int errorCount, int[][] SolveSudoku,
+    public void showGameCompletionDialog(String level, long timeInMillis, int errors) {
+        // Przekształć czas w odpowiedni format (np. minuty:sekundy)
+        long minutes = timeInMillis / 60000;
+        long seconds = (timeInMillis % 60000) / 1000;
+        
+        String message = String.format("Congratulations!\nLevel Completed: %s\nTime: %02d:%02d\nErrors: %d",
+                                       level, minutes, seconds, errors);
+        
+        // Wyświetlenie okna dialogowego z informacjami
+        JOptionPane.showMessageDialog(null, message, "Game Completed", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public void saveGameData(String username, int errorCount,int solveTime, int[][] SolveSudoku,
                              String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        long solveTime = System.currentTimeMillis() - startTime; // Obliczenie czasu rozwiązania
+         
         JSONObject gameData = new JSONObject();
 
         try {
-            // Dodanie danych rozgrywki do obiektu JSON
             gameData.put("username", username);
             gameData.put("solveTime", solveTime);
             gameData.put("errorCount", errorCount);
@@ -588,21 +604,17 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
 
-            // Wczytanie istniejących danych z pliku JSON
             JSONArray gameDataList;
             try (FileReader reader = new FileReader("game_data.json")) {
                 gameDataList = new JSONArray(new JSONTokener(reader));
             } catch (IOException e) {
-                // Jeśli plik nie istnieje, tworzymy nową listę
                 gameDataList = new JSONArray();
             }
 
-            // Dodanie nowego wpisu do listy
             gameDataList.put(gameData);
 
-            // Zapis całej listy do pliku JSON
             try (FileWriter file = new FileWriter("game_data.json")) {
-                file.write(gameDataList.toString(4)); // Wcięcie 4 dla czytelności
+                file.write(gameDataList.toString(4));
             }
 
             System.out.println("Dane gry zostały zapisane pomyślnie.");
