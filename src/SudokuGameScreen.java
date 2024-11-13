@@ -1,9 +1,18 @@
 
 import javax.swing.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,6 +55,9 @@ public class SudokuGameScreen extends JFrame {
     private static final int VERY_HARD = 4;
     private String difficultyLevelText;
 
+    private int[][] SolveSudoku = new int[SIZE][SIZE];
+    private int[][] initialSudoku = new int[SIZE][SIZE];
+    private int initialFilledCount ;
 
 
     public SudokuGameScreen(String username) {
@@ -542,12 +554,62 @@ public class SudokuGameScreen extends JFrame {
         button.setForeground(ColorPalette.TEXT_DARK_GREEN);
         
         numberCount[number]++;
+        for (int i = 1; i < numberCount.length; i++) {
+            if(numberCount[i]!=9){
+                break;
+            }
+            if (i==9 && numberCount[i]==9){
+                saveGameData(username, errorCount, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+            }
+        }
+
     
         if (!isValid(sudokuBoard, row, col, number)) {
             errorCount++; 
             errorLabel.setText("Błędy: " + errorCount); 
         }
         updateNumberButtonStates();
+    }
+    public void saveGameData(String username, int errorCount, int[][] SolveSudoku,
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        long solveTime = System.currentTimeMillis() - startTime; // Obliczenie czasu rozwiązania
+        JSONObject gameData = new JSONObject();
+
+        try {
+            // Dodanie danych rozgrywki do obiektu JSON
+            gameData.put("username", username);
+            gameData.put("solveTime", solveTime);
+            gameData.put("errorCount", errorCount);
+            gameData.put("solveDate", LocalDateTime.now().format(formatter));
+            gameData.put("solvedDiagram", SolveSudoku);
+            gameData.put("difficultyLevel", difficultyLevel);
+            gameData.put("initialFilledCount", initialFilledCount);
+            gameData.put("initialDiagram", initialSudoku);
+
+            // Wczytanie istniejących danych z pliku JSON
+            JSONArray gameDataList;
+            try (FileReader reader = new FileReader("game_data.json")) {
+                gameDataList = new JSONArray(new JSONTokener(reader));
+            } catch (IOException e) {
+                // Jeśli plik nie istnieje, tworzymy nową listę
+                gameDataList = new JSONArray();
+            }
+
+            // Dodanie nowego wpisu do listy
+            gameDataList.put(gameData);
+
+            // Zapis całej listy do pliku JSON
+            try (FileWriter file = new FileWriter("game_data.json")) {
+                file.write(gameDataList.toString(4)); // Wcięcie 4 dla czytelności
+            }
+
+            System.out.println("Dane gry zostały zapisane pomyślnie.");
+
+        } catch (IOException e) {
+            System.out.println("Błąd przy zapisie danych do pliku: " + e.getMessage());
+        }
     }
     
     private void displayNotesInCell(int row, int col) {
@@ -614,7 +676,16 @@ public class SudokuGameScreen extends JFrame {
     private int[][] generateSudoku(int difficultyLevel) {
         int[][] sudoku = new int[SIZE][SIZE];
         fillSudoku(sudoku, 0, 0);
-        removeCells(sudoku, 81- getNumberOfCellsToKeep(difficultyLevel));
+        // Tworzymy kopię uzupelnionego stanu diagramu
+        for (int i = 0; i < SIZE; i++) {
+            SolveSudoku[i] = sudoku[i].clone();
+        }
+        initialFilledCount= getNumberOfCellsToKeep(difficultyLevel);
+        removeCells(sudoku, 81- initialFilledCount);
+        // Tworzymy kopię początkowego stanu diagramu
+        for (int i = 0; i < SIZE; i++) {
+            initialSudoku[i] = sudoku[i].clone();
+        }
         switch (difficultyLevel) {
             case EASY:
                 difficultyLevelText = "Łatwy";
