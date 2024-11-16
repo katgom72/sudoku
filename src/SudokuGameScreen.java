@@ -593,7 +593,6 @@ public class SudokuGameScreen extends JFrame {
         updateNumberButtonStates();
     }
     private void resetGameToInitialState() {
-        // Iterujemy przez całą planszę
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
                 if (originalValues[row][col]==false){
@@ -603,39 +602,27 @@ public class SudokuGameScreen extends JFrame {
                 
             }
         }
-    
-        // Resetujemy dodatkowe dane gry
-        //clearNotesAcrossBoard(); // Czyścimy wszystkie notatki
-        //resetErrorCount();       // Zerujemy licznik błędów
-        //resetMoveStack();        // Czyścimy stos cofania
-        //updateNumberButtonStates(); // Odświeżamy stany przycisków numerycznych
-    }
-    private void clearNotesAcrossBoard() {
-        for (int row = 0; row < SIZE; row++) {
-            for (int col = 0; col < SIZE; col++) {
-                clearNotesInCell(row, col);
-            }
-        }
-    }
-    private void resetErrorCount() {
         errorCount = 0;
-    }
-    private void resetMoveStack() {
+        errorLabel.setText("Błędy: " + errorCount);
         moveStack.clear();
+
+        startTime = System.currentTimeMillis();
+        timer = new Timer(1000, e -> updateTimer());
+        timer.start();
+        updateTimer();
+    
     }
     
     
     
     
     public void showGameCompletionDialog(String level, long timeInMillis, int errors) {
-        // Przekształć czas w odpowiedni format (np. minuty:sekundy)
         long minutes = timeInMillis / 60000;
         long seconds = (timeInMillis % 60000) / 1000;
         
         String message = String.format("Congratulations!\nLevel Completed: %s\nTime: %02d:%02d\nErrors: %d",
                                        level, minutes, seconds, errors);
         
-        // Wyświetlenie okna dialogowego z informacjami
         JOptionPane.showMessageDialog(null, message, "Game Completed", JOptionPane.INFORMATION_MESSAGE);
     }
     public void saveGameData(String username, int errorCount,int solveTime, int[][] SolveSudoku,
