@@ -16,11 +16,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import java.util.Stack;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import java.util.Iterator;
+
 
 
 
@@ -38,7 +42,7 @@ public class SudokuGameScreen extends JFrame {
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
     private List<Integer>[][] notes = new List[SIZE][SIZE];
-    private int[][] currentSudoku = new int[SIZE][SIZE];
+    private int[][] currentSudokuState = new int[SIZE][SIZE]; 
 
     private int errorCount = 0;
     private JLabel errorLabel;
@@ -236,13 +240,17 @@ public class SudokuGameScreen extends JFrame {
             backButton.setOpaque(false);
 
             backButton.addActionListener(e -> {
+                removeExistingEntry(username);
+                long solveTime = System.currentTimeMillis() - startTime;
+                getCurrentSudokuState();
+                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState);
+                    
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
                     SudokuMenu menuScreen = new SudokuMenu(username); 
                     menuScreen.setVisible(true); 
                 });
             });
-
 
             layeredPane.add(backButton, Integer.valueOf(2)); 
 
@@ -294,6 +302,18 @@ public class SudokuGameScreen extends JFrame {
 
 
     }
+    // zapis stanu gry diagramu
+    private int[][] getCurrentSudokuState() {
+    
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                String text = sudokuButtons[row][col].getText();
+                currentSudokuState[row][col] = text.isEmpty() ? 0 : Integer.parseInt(text); 
+            }
+        }
+    
+        return currentSudokuState;
+    }    
     
     private void openSettingsDialog() {
         JDialog dialog = new JDialog();
@@ -355,6 +375,7 @@ public class SudokuGameScreen extends JFrame {
             }
         });
         button2.addActionListener(e -> {
+            removeExistingEntry(username);
             dialog.dispose();
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -368,6 +389,7 @@ public class SudokuGameScreen extends JFrame {
             resetGameToInitialState();
         
         });
+        
         button2.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -577,6 +599,7 @@ public class SudokuGameScreen extends JFrame {
             if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka 
                 long solveTime = System.currentTimeMillis() - startTime;
                 saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+                removeExistingEntry(username);
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
                     EndGameScreen endGameScreen = new EndGameScreen(username,difficultyLevelText,solveTime,errorCount); 
@@ -592,6 +615,42 @@ public class SudokuGameScreen extends JFrame {
         }
         updateNumberButtonStates();
     }
+    public boolean removeExistingEntry(String username) {
+        try (FileReader reader = new FileReader("game_state.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+    
+            // Nowy `JSONArray` do przechowywania elementów, które pozostaną
+            JSONArray updatedArray = new JSONArray();
+    
+            boolean found = false;
+    
+            // Iterujemy po elementach oryginalnej tablicy
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+    
+                // Jeśli username pasuje, nie dodajemy do nowej tablicy
+                if (storedUsername.equals(username)) {
+                    found = true;
+                } else {
+                    updatedArray.put(user);
+                }
+            }
+    
+            // Nadpisujemy plik nową tablicą
+            try (FileWriter writer = new FileWriter("game_state.json")) {
+                writer.write(updatedArray.toString(4)); // Formatowanie JSON z wcięciem
+            }
+    
+            return found; // Zwracamy informację, czy coś zostało usunięte
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return false;
+    }
+    
     private void resetGameToInitialState() {
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
@@ -656,6 +715,44 @@ public class SudokuGameScreen extends JFrame {
             }
 
             System.out.println("Dane gry zostały zapisane pomyślnie.");
+
+        } catch (IOException e) {
+            System.out.println("Błąd przy zapisie danych do pliku: " + e.getMessage());
+        }
+    }
+
+    public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+         
+        JSONObject gameData = new JSONObject();
+
+        try {
+            gameData.put("username", username);
+            gameData.put("solveTime", elapsedTime);
+            gameData.put("errorCount", errorCount);
+            gameData.put("solveDate", LocalDateTime.now().format(formatter));
+            gameData.put("solvedDiagram", SolveSudoku);
+            gameData.put("difficultyLevel", difficultyLevel);
+            gameData.put("initialFilledCount", initialFilledCount);
+            gameData.put("initialDiagram", initialSudoku);
+            gameData.put("currentSudokuState", currentSudokuState);
+
+            JSONArray gameDataList;
+            try (FileReader reader = new FileReader("game_state.json")) {
+                gameDataList = new JSONArray(new JSONTokener(reader));
+            } catch (IOException e) {
+                gameDataList = new JSONArray();
+            }
+
+            gameDataList.put(gameData);
+
+            try (FileWriter file = new FileWriter("game_state.json")) {
+                file.write(gameDataList.toString(4));
+            }
+
+            System.out.println("Stan gry zostały zapisane pomyślnie.");
 
         } catch (IOException e) {
             System.out.println("Błąd przy zapisie danych do pliku: " + e.getMessage());
