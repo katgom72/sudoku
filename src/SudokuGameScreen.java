@@ -38,6 +38,7 @@ public class SudokuGameScreen extends JFrame {
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
     private List<Integer>[][] notes = new List[SIZE][SIZE];
+    private int[][] currentSudoku = new int[SIZE][SIZE];
 
     private int errorCount = 0;
     private JLabel errorLabel;
@@ -293,6 +294,7 @@ public class SudokuGameScreen extends JFrame {
 
 
     }
+    
     private void openSettingsDialog() {
         JDialog dialog = new JDialog();
         dialog.setTitle("Ustawienia");
@@ -351,6 +353,20 @@ public class SudokuGameScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
+        });
+        button2.addActionListener(e -> {
+            dialog.dispose();
+            dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
+                    gameScreen.setVisible(true); 
+                });
+        
+        });
+        button1.addActionListener(e -> {
+            dialog.dispose();
+            resetGameToInitialState();
+        
         });
         button2.addMouseListener(new MouseAdapter() {
             @Override
@@ -576,6 +592,41 @@ public class SudokuGameScreen extends JFrame {
         }
         updateNumberButtonStates();
     }
+    private void resetGameToInitialState() {
+        // Iterujemy przez całą planszę
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                if (originalValues[row][col]==false){
+                    JButton button = sudokuButtons[row][col];
+                    button.setText("");
+                }
+                
+            }
+        }
+    
+        // Resetujemy dodatkowe dane gry
+        //clearNotesAcrossBoard(); // Czyścimy wszystkie notatki
+        //resetErrorCount();       // Zerujemy licznik błędów
+        //resetMoveStack();        // Czyścimy stos cofania
+        //updateNumberButtonStates(); // Odświeżamy stany przycisków numerycznych
+    }
+    private void clearNotesAcrossBoard() {
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                clearNotesInCell(row, col);
+            }
+        }
+    }
+    private void resetErrorCount() {
+        errorCount = 0;
+    }
+    private void resetMoveStack() {
+        moveStack.clear();
+    }
+    
+    
+    
+    
     public void showGameCompletionDialog(String level, long timeInMillis, int errors) {
         // Przekształć czas w odpowiedni format (np. minuty:sekundy)
         long minutes = timeInMillis / 60000;
@@ -645,7 +696,7 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     
-        sb.append("</center></html>");
+        sb.append("</pre></html>");
     
         button.setText(sb.toString());
         button.setFont(new Font("Arial", Font.PLAIN, 10)); 
