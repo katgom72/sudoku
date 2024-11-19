@@ -12,11 +12,13 @@ public class EndGameScreen extends JFrame{
     private String difficultyLevelText;
     private long solveTime;
     private int errorCount;
-    public EndGameScreen(String username, String difficultyLevelText, long solveTime,int errorCount) {
+    private int finalId;
+    public EndGameScreen(String username, String difficultyLevelText, long solveTime,int errorCount, int finalId) {
             this.username = username;
             this.difficultyLevelText = difficultyLevelText;
             this.solveTime = solveTime;
             this.errorCount = errorCount;
+            this.finalId = finalId;
 
             setSize(432, 768);
             setResizable(false);
@@ -122,7 +124,7 @@ public class EndGameScreen extends JFrame{
 
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
-                EndGameScreen screen = new EndGameScreen("username","Łatwy",000000,0);
+                EndGameScreen screen = new EndGameScreen("username","Łatwy",000000,0,0);
                 screen.setVisible(true);
             });
         }

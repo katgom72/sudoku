@@ -304,7 +304,7 @@ public class SudokuGameScreen extends JFrame {
     }
     // zapis stanu gry diagramu
     private int[][] getCurrentSudokuState() {
-    
+        removeExistingEntry(username);
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
                 String text = sudokuButtons[row][col].getText();
@@ -600,11 +600,6 @@ public class SudokuGameScreen extends JFrame {
                 long solveTime = System.currentTimeMillis() - startTime;
                 saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
                 removeExistingEntry(username);
-                dispose(); 
-                SwingUtilities.invokeLater(() -> {
-                    EndGameScreen endGameScreen = new EndGameScreen(username,difficultyLevelText,solveTime,errorCount); 
-                    endGameScreen.setVisible(true); 
-                });
             }
         }
 
@@ -684,14 +679,36 @@ public class SudokuGameScreen extends JFrame {
         
         JOptionPane.showMessageDialog(null, message, "Game Completed", JOptionPane.INFORMATION_MESSAGE);
     }
-    public void saveGameData(String username, int errorCount,int solveTime, int[][] SolveSudoku,
-                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
+    public void saveGameData(String username, int errorCount, int solveTime, int[][] SolveSudoku,
+                         String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-         
+
         JSONObject gameData = new JSONObject();
 
         try {
+            JSONArray gameDataList;
+            
+            // Odczytaj istniejące dane
+            try (FileReader reader = new FileReader("game_data.json")) {
+                gameDataList = new JSONArray(new JSONTokener(reader));
+            } catch (IOException e) {
+                gameDataList = new JSONArray();
+            }
+
+            // Znajdź maksymalne data_game_id
+            int maxId = 0;
+            for (int i = 0; i < gameDataList.length(); i++) {
+                JSONObject existingData = gameDataList.getJSONObject(i);
+                if (existingData.has("data_game_id")) {
+                    maxId = Math.max(maxId, existingData.getInt("data_game_id"));
+                }
+            }
+            int finalId = maxId + 1; // Obliczamy nowy ID tutaj
+
+
+            // Przygotuj nowe dane gry
+            gameData.put("data_game_id", finalId); // Nowy ID
             gameData.put("username", username);
             gameData.put("solveTime", solveTime);
             gameData.put("errorCount", errorCount);
@@ -701,25 +718,26 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
 
-            JSONArray gameDataList;
-            try (FileReader reader = new FileReader("game_data.json")) {
-                gameDataList = new JSONArray(new JSONTokener(reader));
-            } catch (IOException e) {
-                gameDataList = new JSONArray();
-            }
-
+            // Dodaj nowe dane do listy
             gameDataList.put(gameData);
 
+            // Zapisz zaktualizowaną listę do pliku
             try (FileWriter file = new FileWriter("game_data.json")) {
                 file.write(gameDataList.toString(4));
             }
 
             System.out.println("Dane gry zostały zapisane pomyślnie.");
+            dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    QuestionnaireScreen questionnaireScreen = new QuestionnaireScreen(username,finalId); 
+                    questionnaireScreen.setVisible(true); 
+                });
 
         } catch (IOException e) {
             System.out.println("Błąd przy zapisie danych do pliku: " + e.getMessage());
         }
     }
+
 
     public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
                              String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState) {
