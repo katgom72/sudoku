@@ -1,5 +1,3 @@
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -69,6 +67,13 @@ public class SudokuMenu extends JFrame {
                 SwingUtilities.invokeLater(() -> {
                     SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
                     gameScreen.setVisible(true); 
+                });
+            }
+            if (numer==2){
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    HowToPlay htpScreen = new HowToPlay(username); 
+                    htpScreen.setVisible(true); 
                 });
             }
         
