@@ -236,7 +236,7 @@ public class SudokuGameScreen extends JFrame {
                 removeExistingEntry(username);
                 long solveTime = System.currentTimeMillis() - startTime;
                 getCurrentSudokuState();
-                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState);
+                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState, notes);
                     
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -733,7 +733,7 @@ public class SudokuGameScreen extends JFrame {
 
 
     public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
-                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState) {
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState, List[][] notes) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
          
@@ -749,6 +749,7 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
             gameData.put("currentSudokuState", currentSudokuState);
+            gameData.put("notes", notes);
 
             JSONArray gameDataList;
             try (FileReader reader = new FileReader("game_state.json")) {
