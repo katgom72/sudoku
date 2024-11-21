@@ -26,8 +26,8 @@ import java.awt.event.ActionEvent;
 public class HowToPlay extends JFrame {
     private String username;
 
-    private int currentBackgroundIndex = 0; // Index aktualnego tła
-    private BufferedImage[] backgrounds;   // Tablica z obrazkami tła
+    private int currentBackgroundIndex = 0; 
+    private BufferedImage[] backgrounds;  
     private BackgroundPanel backgroundPanel;
 
     public HowToPlay(String username) {
@@ -36,7 +36,6 @@ public class HowToPlay extends JFrame {
         setResizable(false); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // Załaduj obrazki tła
         try {
             backgrounds = new BufferedImage[]{
                 ImageIO.read(new File("resources/9.png")),
@@ -48,7 +47,6 @@ public class HowToPlay extends JFrame {
             JOptionPane.showMessageDialog(this, "Image files not found.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-        // Ustaw początkowe tło
         backgroundPanel = new BackgroundPanel(backgrounds[currentBackgroundIndex]);
         setContentPane(backgroundPanel);
 
@@ -87,7 +85,6 @@ public class HowToPlay extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Zmień tło na następne
                 currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
                 backgroundPanel.setBackgroundImage(backgrounds[currentBackgroundIndex]);
                 backgroundPanel.repaint();
@@ -176,7 +173,7 @@ public class HowToPlay extends JFrame {
 
         public BackgroundPanel(Image background) {
             this.background = background;
-            setLayout(null); // Manualne pozycjonowanie elementów
+            setLayout(null); 
         }
 
         public void setBackgroundImage(Image background) {

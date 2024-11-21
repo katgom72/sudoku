@@ -33,6 +33,8 @@ public class SudokuMenu extends JFrame {
         addButton("Statystyki", 395,3);
         addButton("Taktyki", 465,4);
         addButton("O aplikacji", 535,5);
+        addButton("Wyloguj", 605,6);
+
     }
 
     private void addButton(String text, int yPosition, int numer) {
@@ -74,6 +76,13 @@ public class SudokuMenu extends JFrame {
                 SwingUtilities.invokeLater(() -> {
                     HowToPlay htpScreen = new HowToPlay(username); 
                     htpScreen.setVisible(true); 
+                });
+            }
+            if (numer==6){
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    UserLoginScreen loginScreen = new UserLoginScreen(); 
+                    loginScreen.setVisible(true); 
                 });
             }
         

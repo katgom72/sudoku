@@ -78,7 +78,7 @@ public class EndGameScreen extends JFrame{
             setLocationRelativeTo(null);
             setLayout(null);
             
-            addButton("Wróć do menu Menu", 550,1);
+            addButton("Odpowiedz na pytania", 550,1);
             
         }
 
@@ -112,8 +112,8 @@ public class EndGameScreen extends JFrame{
                 if (numer==1){
                     dispose(); 
                     SwingUtilities.invokeLater(() -> {
-                        SudokuMenu gameScreen = new SudokuMenu(username); 
-                        gameScreen.setVisible(true); 
+                        QuestionnaireScreen screen = new QuestionnaireScreen(username, finalId); 
+                        screen.setVisible(true); 
                     });
                 }
             
