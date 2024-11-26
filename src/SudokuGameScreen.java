@@ -585,21 +585,25 @@ public class SudokuGameScreen extends JFrame {
         button.setForeground(ColorPalette.TEXT_DARK_GREEN);
         
         numberCount[number]++;
-        for (int i = 1; i < numberCount.length; i++) {
-            if(numberCount[i]!=9){
-                break;
-            }
-            if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka 
-                long solveTime = System.currentTimeMillis() - startTime;
-                saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
-                removeExistingEntry(username);
-            }
-        }
-
+        
     
         if (!isValid(sudokuBoard, row, col, number)) {
             errorCount++; 
             errorLabel.setText("Błędy: " + errorCount); 
+        }else{
+            for (int i = 1; i < numberCount.length; i++) {
+                if(numberCount[i]!=9){
+                    break;
+                }
+                if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka
+                    if (isSudokuValid(sudokuBoard)){
+                        long solveTime = System.currentTimeMillis() - startTime;
+                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+                        removeExistingEntry(username);
+                    }
+                }
+            }
+    
         }
         updateNumberButtonStates();
     }
@@ -649,9 +653,15 @@ public class SudokuGameScreen extends JFrame {
                 
             }
         }
+        for (int i = 1; i < numberCount.length; i++) {
+            numberCount[i]=0;
+        }
+        countInitialNumbers();
+        
         errorCount = 0;
         errorLabel.setText("Błędy: " + errorCount);
         moveStack.clear();
+        
 
         startTime = System.currentTimeMillis();
         timer = new Timer(1000, e -> updateTimer());
@@ -662,16 +672,6 @@ public class SudokuGameScreen extends JFrame {
     
     
     
-    
-    public void showGameCompletionDialog(String level, long timeInMillis, int errors) {
-        long minutes = timeInMillis / 60000;
-        long seconds = (timeInMillis % 60000) / 1000;
-        
-        String message = String.format("Congratulations!\nLevel Completed: %s\nTime: %02d:%02d\nErrors: %d",
-                                       level, minutes, seconds, errors);
-        
-        JOptionPane.showMessageDialog(null, message, "Game Completed", JOptionPane.INFORMATION_MESSAGE);
-    }
     public void saveGameData(String username, int errorCount, int solveTime, int[][] SolveSudoku,
                          String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
 
@@ -878,6 +878,31 @@ public class SudokuGameScreen extends JFrame {
         }
         return false;
     }
+    private boolean isSudokuValid(int[][] sudoku) {
+        // Iterujemy przez każdy wiersz i kolumnę
+        for (int row = 0; row < sudoku.length; row++) {
+            for (int col = 0; col < sudoku[row].length; col++) {
+                int num = sudoku[row][col];
+    
+                // Jeśli komórka jest pusta, pomijamy ją (zakładamy, że puste komórki mają wartość 0)
+                if (num == 0) continue;
+    
+                // Tymczasowo usuwamy liczbę z planszy, aby jej obecność nie wpłynęła na wynik walidacji
+                sudoku[row][col] = 0;
+    
+                // Sprawdzamy, czy liczba jest zgodna z zasadami Sudoku
+                if (!isValid(sudoku, row, col, num)) {
+                    sudoku[row][col] = num; // Przywracamy wartość do planszy
+                    return false; // Tablica jest niepoprawna
+                }
+    
+                // Przywracamy wartość liczby na planszy
+                sudoku[row][col] = num;
+            }
+        }
+        return true; // Jeśli nie znaleziono błędów, tablica jest poprawna
+    }
+    
 
     private boolean isValid(int[][] sudoku, int row, int col, int num) {
         for (int x = 0; x < SIZE; x++) {
