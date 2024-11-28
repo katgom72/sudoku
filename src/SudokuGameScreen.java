@@ -606,23 +606,50 @@ public class SudokuGameScreen extends JFrame {
     
         }
         updateNumberButtonStates();
+        clearRelatedNotes(row,col,number);
     }
+
+    private void clearRelatedNotes(int row, int col, int number) {
+        for (int i = 0; i < SIZE; i++) {
+            if (notes[i][col] != null && isNotesActiveInCell(i, col)) {
+                notes[i][col].remove(Integer.valueOf(number));
+                displayNotesInCell(i, col);
+            }
+        }
+    
+        for (int j = 0; j < SIZE; j++) {
+            if (notes[row][j] != null && isNotesActiveInCell(row, j)) {
+                notes[row][j].remove(Integer.valueOf(number));
+                displayNotesInCell(row, j);
+            }
+        }
+    
+        int startRow = (row / 3) * 3;
+        int startCol = (col / 3) * 3;
+    
+        for (int i = startRow; i < startRow + 3; i++) {
+            for (int j = startCol; j < startCol + 3; j++) {
+                if (notes[i][j] != null && isNotesActiveInCell(i, j)) {
+                    notes[i][j].remove(Integer.valueOf(number));
+                    displayNotesInCell(i, j);
+                }
+            }
+        }
+    }
+    
     public boolean removeExistingEntry(String username) {
         try (FileReader reader = new FileReader("game_state.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
-            // Nowy `JSONArray` do przechowywania elementów, które pozostaną
             JSONArray updatedArray = new JSONArray();
     
             boolean found = false;
     
-            // Iterujemy po elementach oryginalnej tablicy
             for (int i = 0; i < usersArray.length(); i++) {
                 JSONObject user = usersArray.getJSONObject(i);
                 String storedUsername = user.getString("username");
     
-                // Jeśli username pasuje, nie dodajemy do nowej tablicy
                 if (storedUsername.equals(username)) {
                     found = true;
                 } else {
@@ -630,12 +657,11 @@ public class SudokuGameScreen extends JFrame {
                 }
             }
     
-            // Nadpisujemy plik nową tablicą
             try (FileWriter writer = new FileWriter("game_state.json")) {
-                writer.write(updatedArray.toString(4)); // Formatowanie JSON z wcięciem
+                writer.write(updatedArray.toString(4)); 
             }
     
-            return found; // Zwracamy informację, czy coś zostało usunięte
+            return found; 
         } catch (IOException e) {
             e.printStackTrace();
         }
