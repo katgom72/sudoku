@@ -112,7 +112,7 @@ public class EndGameScreen extends JFrame{
                 if (numer==1){
                     dispose(); 
                     SwingUtilities.invokeLater(() -> {
-                        QuestionnaireScreen screen = new QuestionnaireScreen(username, finalId); 
+                        QuestionnaireScreen screen = new QuestionnaireScreen(username, finalId,difficultyLevelText); 
                         screen.setVisible(true); 
                     });
                 }

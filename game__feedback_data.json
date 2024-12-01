@@ -1,66 +1,9 @@
-[
-    {
-        "a1": "Nudząca",
-        "a2": 10,
-        "a3": "Trudniejszy",
-        "a4": "Relaksujące, spokojniejsze",
-        "data_game_id": 0,
-        "username": "username"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 5,
-        "a3": "Trudniejszy",
-        "a4": "Coś pomiędzy",
-        "data_game_id": 1,
-        "username": "user1"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 13,
-        "a3": "Trudniejszy",
-        "a4": "Coś pomiędzy",
-        "data_game_id": 2,
-        "username": "user1"
-    },
-    {
-        "a1": "Satysfakcjonująca",
-        "a2": 19,
-        "a3": "Na tym samym poziomie",
-        "a4": "Relaksujące, spokojniejsze",
-        "data_game_id": 3,
-        "username": "user1"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 17,
-        "a3": "Trudniejszy",
-        "a4": "Relaksujące, spokojniejsze",
-        "data_game_id": 4,
-        "username": "user1"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 11,
-        "a3": "Trudniejszy",
-        "a4": "Relaksujące, spokojniejsze",
-        "data_game_id": 5,
-        "username": "user1"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 17,
-        "a3": "Trudniejszy",
-        "a4": "Relaksujące, spokojniejsze",
-        "data_game_id": 6,
-        "username": "user1"
-    },
-    {
-        "a1": "Nudząca",
-        "a2": 17,
-        "a3": "Trudniejszy",
-        "a4": "Bardziej intensywne",
-        "data_game_id": 8,
-        "username": "username"
-    }
-]
+[{
+    "a1": "Za łatwa",
+    "a2": 18,
+    "a3": "Trudniejszy",
+    "a4": "Bardziej intensywne",
+    "difficultyLevel": "Łatwy",
+    "data_game_id": 1,
+    "username": "user1"
+}]

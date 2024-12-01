@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent;
 
 public class SudokuGameScreen extends JFrame {
     private String username;
+    private int difficulty;
     private Stack<Move> moveStack = new Stack<>(); 
     private static final int SIZE = 9;
     private int[][] sudokuBoard;
@@ -58,8 +59,9 @@ public class SudokuGameScreen extends JFrame {
     private int initialFilledCount ;
 
 
-    public SudokuGameScreen(String username) {
+    public SudokuGameScreen(String username, int difficulty) {
         this.username = username;
+        this.difficulty = difficulty;
         setSize(432, 768);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +83,7 @@ public class SudokuGameScreen extends JFrame {
         }
 
 
-        sudokuBoard = generateSudoku(1);
+        sudokuBoard = generateSudoku(difficulty);
         sudokuButtons = new JButton[SIZE][SIZE];
         originalValues = new boolean[SIZE][SIZE];
 
@@ -236,7 +238,8 @@ public class SudokuGameScreen extends JFrame {
                 removeExistingEntry(username);
                 long solveTime = System.currentTimeMillis() - startTime;
                 getCurrentSudokuState();
-                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState, notes);
+                
+                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState);
                     
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -372,7 +375,7 @@ public class SudokuGameScreen extends JFrame {
             dialog.dispose();
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
-                    SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty); 
                     gameScreen.setVisible(true); 
                 });
         
@@ -567,9 +570,9 @@ public class SudokuGameScreen extends JFrame {
     
         JButton button = sudokuButtons[row][col];
 
-        if (isNotesActiveInCell(row, col)) {
-            clearNotesInCell(row, col);
-        }
+
+        clearNotesInCell(row, col);
+
 
         String currentText = button.getText();
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
@@ -759,7 +762,7 @@ public class SudokuGameScreen extends JFrame {
 
 
     public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
-                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState, List[][] notes) {
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
          
@@ -775,7 +778,6 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
             gameData.put("currentSudokuState", currentSudokuState);
-            gameData.put("notes", notes);
 
             JSONArray gameDataList;
             try (FileReader reader = new FileReader("game_state.json")) {
@@ -974,7 +976,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username");
+            SudokuGameScreen screen = new SudokuGameScreen("username",1);
             screen.setVisible(true);
         });
     }

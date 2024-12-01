@@ -15,6 +15,7 @@ import org.json.JSONTokener;
 import java.io.FileWriter;
 
 public class QuestionnaireScreen extends JFrame{
+    private String difficultyLevelText;
     private String username;
     private int finalId;
     private ButtonGroup q1;
@@ -26,9 +27,10 @@ public class QuestionnaireScreen extends JFrame{
 
 
 
-    public QuestionnaireScreen(String username, int finalId) {
+    public QuestionnaireScreen(String username, int finalId, String difficultyLevelText) {
             this.username = username;
             this.finalId = finalId;
+            this.difficultyLevelText=difficultyLevelText;
 
             setSize(432, 768);
             setResizable(false);
@@ -50,7 +52,7 @@ public class QuestionnaireScreen extends JFrame{
             add(error1Label);
 
 
-            addQ1RadioButtons(170,"Męcząca","Satysfakcjonująca","Nudząca");
+            addQ1RadioButtons(170,"Za trudna","Satysfakcjonująca","Za łatwa");
             addDifficultySlider(310);  
             addQ1RadioButtons(410,"Łatwiejszy","Na tym samym poziomie","Trudniejszy");
             addQ1RadioButtons(540,"Relaksujące, spokojniejsze","Coś pomiędzy","Bardziej intensywne");
@@ -173,6 +175,7 @@ public class QuestionnaireScreen extends JFrame{
                 // Przygotuj nowe dane gry
                 gameFeedbackData.put("data_game_id", finalId); // Nowy ID
                 gameFeedbackData.put("username", username);
+                gameFeedbackData.put("difficultyLevel", difficultyLevelText);
                 gameFeedbackData.put("a1", a1);
                 gameFeedbackData.put("a2", a2);
                 gameFeedbackData.put("a3", a3);
@@ -242,7 +245,7 @@ public class QuestionnaireScreen extends JFrame{
             a2Button.setOpaque(false);
             a3Button.setOpaque(false);
         
-            if(a1=="Męcząca"){
+            if(a1=="Za trudna"){
                 q1 = new ButtonGroup();
                 q1.add(a1Button);
                 q1.add(a2Button);
@@ -281,7 +284,7 @@ public class QuestionnaireScreen extends JFrame{
 
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
-                QuestionnaireScreen screen = new QuestionnaireScreen("username",0);
+                QuestionnaireScreen screen = new QuestionnaireScreen("username",0, "Łatwiejszy");
                 screen.setVisible(true);
             });
         }

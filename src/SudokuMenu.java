@@ -1,11 +1,21 @@
 import javax.swing.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
+
 
 
 public class SudokuMenu extends JFrame {
@@ -65,11 +75,23 @@ public class SudokuMenu extends JFrame {
         });
         button.addActionListener(e -> {
             if (numer==1){
-                dispose(); 
-                SwingUtilities.invokeLater(() -> {
-                    SudokuGameScreen gameScreen = new SudokuGameScreen(username); 
-                    gameScreen.setVisible(true); 
-                });
+                if(countEntriesByUsername(username)==0){
+                    
+                    dispose(); 
+                    SwingUtilities.invokeLater(() -> {
+                        SudokuGameScreen gameScreen = new SudokuGameScreen(username,1); 
+                        gameScreen.setVisible(true); 
+                    });
+                }else{
+                    int difficulty = determineNextLevel(username);
+                    System.out.println(difficulty);
+                    dispose(); 
+                    SwingUtilities.invokeLater(() -> {
+                        SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty); 
+                        gameScreen.setVisible(true); 
+                    });
+                }
+                
             }
             if (numer==2){
                 dispose(); 
@@ -90,7 +112,136 @@ public class SudokuMenu extends JFrame {
 
         add(button);
     }
-
+    public static int countEntriesByUsername(String username) {
+        try (FileReader reader = new FileReader("game_data.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+    
+            
+            int count = 0;
+        
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+    
+                if (storedUsername.equals(username)) {
+                    count=count+1;
+                }
+            }
+    
+            return count; 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return 0;
+    }
+    public static int firstLevel(String username) {
+        try (FileReader reader = new FileReader("registration_data.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+    
+            
+            int difficulty = 0;
+        
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+                String d= user.getString("skillLevel");
+    
+                if (storedUsername.equals(username)) {
+                    if("Początkujący".equals(d)){
+                        difficulty=1;
+                    }
+                    if("Średniozaawansowany".equals(d)){
+                        difficulty=1;
+                    }
+                    if("Zaawansowany".equals(d)){
+                        difficulty=2;
+                    }
+                    if("Ekspert".equals(d)){
+                        difficulty=3;
+                    }
+                }
+            }
+    
+            return difficulty; 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return 1;
+    }
+    public static int determineNextLevel(String username) {
+        try (FileReader reader = new FileReader("game__feedback_data.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+            
+            int id = 0;
+            int difficulty = 1;
+        
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+                int lastgame = user.getInt("data_game_id");
+                String difficultyLevel = user.getString("difficultyLevel");
+                String next = user.getString("a3");
+                System.out.println(difficultyLevel);
+                System.out.println(next);
+    
+                if (storedUsername.equals(username)) {
+                    if (lastgame > id) {
+                        System.out.println("udalo sie 1");
+                        id = lastgame;
+    
+                        if ("Łatwy".equals(difficultyLevel)) {
+                            System.out.println("udalo sie 2");
+                            if ("Trudniejszy".equals(next)) {
+                                difficulty = 2;
+                            } else {
+                                difficulty = 1;
+                            }
+                        }
+                        if ("Średni".equals(difficultyLevel)) {
+                            if ("Trudniejszy".equals(next)) {
+                                difficulty = 3;
+                            }
+                            if ("Łatwiejszy".equals(next)) {
+                                difficulty = 1;
+                            }
+                            if ("Na tym samym poziomie".equals(next)) {
+                                difficulty = 2;
+                            }
+                        }
+                        if ("Trudny".equals(difficultyLevel)) {
+                            if ("Trudniejszy".equals(next)) {
+                                difficulty = 4;
+                            }
+                            if ("Łatwiejszy".equals(next)) {
+                                difficulty = 2;
+                            }
+                            if ("Na tym samym poziomie".equals(next)) {
+                                difficulty = 3;
+                            }
+                        }
+                        if ("Bardzo trudny".equals(difficultyLevel)) {
+                            if ("Łatwiejszy".equals(next)) {
+                                difficulty = 3;
+                            } else {
+                                difficulty = 4;
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println(difficulty);
+            return difficulty; 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             SudokuMenu screen = new SudokuMenu("username");
