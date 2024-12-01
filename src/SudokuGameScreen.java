@@ -239,7 +239,7 @@ public class SudokuGameScreen extends JFrame {
                 long solveTime = System.currentTimeMillis() - startTime;
                 getCurrentSudokuState();
                 
-                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState);
+                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState,notes);
                     
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -303,13 +303,17 @@ public class SudokuGameScreen extends JFrame {
         removeExistingEntry(username);
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
-                String text = sudokuButtons[row][col].getText();
-                currentSudokuState[row][col] = text.isEmpty() ? 0 : Integer.parseInt(text); 
+                if (isNotesActiveInCell(row, col)) {
+                    currentSudokuState[row][col] = 10;  // Ustawiamy 10, jeśli komórka zawiera notatki
+                } else {
+                    String text = sudokuButtons[row][col].getText();
+                    currentSudokuState[row][col] = text.isEmpty() ? 0 : Integer.parseInt(text);
+                }
             }
         }
-    
         return currentSudokuState;
-    }    
+    }
+    
     
     private void openSettingsDialog() {
         JDialog dialog = new JDialog();
@@ -762,13 +766,14 @@ public class SudokuGameScreen extends JFrame {
 
 
     public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
-                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState) {
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState, List<Integer>[][] notes) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
          
         JSONObject gameData = new JSONObject();
 
         try {
+            
             gameData.put("username", username);
             gameData.put("solveTime", elapsedTime);
             gameData.put("errorCount", errorCount);
@@ -778,6 +783,9 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
             gameData.put("currentSudokuState", currentSudokuState);
+            gameData.put("notes", notes);
+
+            
 
             JSONArray gameDataList;
             try (FileReader reader = new FileReader("game_state.json")) {
