@@ -54,5 +54,13 @@
         "a4": "Relaksujące, spokojniejsze",
         "data_game_id": 6,
         "username": "user1"
+    },
+    {
+        "a1": "Nudząca",
+        "a2": 17,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "data_game_id": 8,
+        "username": "username"
     }
 ]

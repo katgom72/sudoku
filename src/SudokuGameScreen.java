@@ -598,8 +598,8 @@ public class SudokuGameScreen extends JFrame {
                 if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka
                     if (isSudokuValid(sudokuBoard)){
                         long solveTime = System.currentTimeMillis() - startTime;
-                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
                         removeExistingEntry(username);
+                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
                     }
                 }
             }
@@ -748,8 +748,8 @@ public class SudokuGameScreen extends JFrame {
             System.out.println("Dane gry zostały zapisane pomyślnie.");
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
-                    QuestionnaireScreen questionnaireScreen = new QuestionnaireScreen(username,finalId); 
-                    questionnaireScreen.setVisible(true); 
+                    EndGameScreen endgameScreen = new EndGameScreen(username, difficultyLevel, solveTime, errorCount, finalId); 
+                    endgameScreen.setVisible(true); 
                 });
 
         } catch (IOException e) {
@@ -950,6 +950,8 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     }
+
+    
 
     private int getNumberOfCellsToKeep(int difficultyLevel) {
         switch (difficultyLevel) {

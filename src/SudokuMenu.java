@@ -28,7 +28,7 @@ public class SudokuMenu extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
         
-        addButton("Poziom 1", 245,1);
+        addButton("Graj", 245,1);
         addButton("Jak grać?", 315,2);
         addButton("Statystyki", 385,3);
         addButton("Taktyki", 455,4);
