@@ -75,23 +75,26 @@ public class SudokuMenu extends JFrame {
         });
         button.addActionListener(e -> {
             if (numer==1){
-                if(countEntriesByUsername(username)==0){
-                    
-                    dispose(); 
-                    SwingUtilities.invokeLater(() -> {
-                        SudokuGameScreen gameScreen = new SudokuGameScreen(username,1); 
-                        gameScreen.setVisible(true); 
-                    });
+                if(hasUnfinishedGame(username)){
+                    openSettingsDialog();
                 }else{
-                    int difficulty = determineNextLevel(username);
-                    System.out.println(difficulty);
-                    dispose(); 
-                    SwingUtilities.invokeLater(() -> {
-                        SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty); 
-                        gameScreen.setVisible(true); 
-                    });
+                    if(countEntriesByUsername(username)==0){
+                    
+                        dispose(); 
+                        SwingUtilities.invokeLater(() -> {
+                            SudokuGameScreen gameScreen = new SudokuGameScreen(username,1,false); 
+                            gameScreen.setVisible(true); 
+                        });
+                    }else{
+                        int difficulty = determineNextLevel(username);
+                        System.out.println(difficulty);
+                        dispose(); 
+                        SwingUtilities.invokeLater(() -> {
+                            SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty,false); 
+                            gameScreen.setVisible(true); 
+                        });
+                    }
                 }
-                
             }
             if (numer==2){
                 dispose(); 
@@ -112,6 +115,107 @@ public class SudokuMenu extends JFrame {
 
         add(button);
     }
+
+    private void openSettingsDialog() {
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Ustawienia");
+    
+        JPanel panel = new JPanel();
+        panel.setBackground(ColorPalette.BACKGROUND_COLOR);
+    
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); 
+    
+        JButton button1 = new JButton("Kontynuuj grę");
+        JButton button2 = new JButton("Zacznij nową gra");
+    
+        button1.setPreferredSize(new Dimension(300, 60));
+        button2.setPreferredSize(new Dimension(300, 60));
+    
+        button1.setFont(new Font("Arial", Font.BOLD, 20));
+        button1.setFocusPainted(false);
+        button1.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button1.setBorder(BorderFactory.createEmptyBorder());
+    
+        button1.setContentAreaFilled(false);
+        button1.setOpaque(false);
+        button1.setUI(new RoundedButtonUI());
+
+        button2.setFont(new Font("Arial", Font.BOLD, 20));
+        button2.setFocusPainted(false);
+        button2.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button2.setBorder(BorderFactory.createEmptyBorder());
+    
+        button2.setContentAreaFilled(false);
+        button2.setOpaque(false);
+        button2.setUI(new RoundedButtonUI());
+
+        button1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button1.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+        button2.addActionListener(e -> {
+            if(countEntriesByUsername(username)==0){
+                    
+                dialog.dispose();
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,1, false); 
+                    gameScreen.setVisible(true); 
+                });
+            }else{
+                int difficulty = determineNextLevel(username);
+                dialog.dispose();
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty, false); 
+                    gameScreen.setVisible(true); 
+                });
+            }
+        
+        });
+        button1.addActionListener(e -> {
+            dialog.dispose();
+            dispose();
+            SwingUtilities.invokeLater(() -> {
+                SudokuGameScreen gameScreen = new SudokuGameScreen(username,1, true); 
+                gameScreen.setVisible(true); 
+            });
+        });
+        
+        button2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button2.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button2.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+    
+        panel.add(button1);
+        panel.add(button2);
+    
+        dialog.add(panel);
+    
+        dialog.setSize(370, 180); 
+    
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
+
     public static int countEntriesByUsername(String username) {
         try (FileReader reader = new FileReader("game_data.json")) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -135,6 +239,30 @@ public class SudokuMenu extends JFrame {
         }
     
         return 0;
+    }
+
+    public boolean hasUnfinishedGame(String username) {
+        try (FileReader reader = new FileReader("game_state.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+    
+            
+        
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+    
+                if (storedUsername.equals(username)) {
+                    return true;
+                }
+            }
+            return false;
+     
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return false;
     }
     public static int firstLevel(String username) {
         try (FileReader reader = new FileReader("registration_data.json")) {
@@ -241,6 +369,7 @@ public class SudokuMenu extends JFrame {
         }
         return 1;
     }
+
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
