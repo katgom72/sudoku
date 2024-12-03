@@ -314,16 +314,11 @@ public class SudokuMenu extends JFrame {
                 int lastgame = user.getInt("data_game_id");
                 String difficultyLevel = user.getString("difficultyLevel");
                 String next = user.getString("a3");
-                System.out.println(difficultyLevel);
-                System.out.println(next);
     
                 if (storedUsername.equals(username)) {
                     if (lastgame > id) {
-                        System.out.println("udalo sie 1");
                         id = lastgame;
-    
                         if ("Łatwy".equals(difficultyLevel)) {
-                            System.out.println("udalo sie 2");
                             if ("Trudniejszy".equals(next)) {
                                 difficulty = 2;
                             } else {

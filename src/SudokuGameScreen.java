@@ -370,6 +370,7 @@ public class SudokuGameScreen extends JFrame {
         timer = new Timer(1000, e -> updateTimer());
         timer.start();
         
+        
 
 
     }
@@ -660,13 +661,15 @@ public class SudokuGameScreen extends JFrame {
 
     private void handleButtonClick(int row, int col) {
         resetButtonColors(); 
+        System.out.println("podswietlenie2");
+
         
         String cellValue = sudokuButtons[row][col].getText();
         
         if (!cellValue.isEmpty()) {
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
-                    if (sudokuButtons[i][j].getText().equals(cellValue)) {
+                    if (sudokuButtons[i][j].getText().equals(cellValue) && notes[i][j] == null) {
                         sudokuButtons[i][j].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
                     }
                 }
@@ -690,6 +693,7 @@ public class SudokuGameScreen extends JFrame {
     private void handleNumberButtonClick(int number) {
         JButton selectedButton = lastHighlightedButton;
         if (selectedButton == null) return;
+        System.out.println("podswietlenie1");
     
         int row = -1, col = -1;
         outerLoop:
