@@ -464,7 +464,7 @@ public class SudokuGameScreen extends JFrame {
     
         JButton button1 = new JButton("Zacznij od nowa");
         JButton button2 = new JButton("Nowa gra");
-        JButton button3 = new JButton("Zmień kolorystykę");
+        JButton button3 = new JButton("Zmniejsz poziom");
     
         button1.setPreferredSize(new Dimension(300, 60));
         button2.setPreferredSize(new Dimension(300, 60));
@@ -514,6 +514,19 @@ public class SudokuGameScreen extends JFrame {
         });
         button2.addActionListener(e -> {
             removeExistingEntry(username);
+            dialog.dispose();
+            dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty, false); 
+                    gameScreen.setVisible(true); 
+                });
+        
+        });
+        button3.addActionListener(e -> {
+            removeExistingEntry(username);
+            if(difficulty>1){
+                difficulty=difficulty-1;
+            }
             dialog.dispose();
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
