@@ -8,6 +8,7 @@ public class ColorPalette {
     public static final Color TEXT_LIGHT_GREEN = new Color(0x01a456);
     public static final Color BUTTON_HIGHLIGHT_COLOR = new Color(0x87e167);
     public static final Color HIGHLIGHT_COLOR = new Color(0xd0f4a3);
+    public static final Color HIGHLIGHT_NOTE_COLOR = new Color(0xA4F494);
     public static final Color SUDOKU_SQUARE_COLOR = new Color(0xe7ffc9);
     public static final Color BACKGROUND_COLOR = new Color(0xeefee7);
     public static final Color BEIGE_COLOR = new Color(0xfef7e7);

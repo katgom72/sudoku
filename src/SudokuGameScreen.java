@@ -357,7 +357,6 @@ public class SudokuGameScreen extends JFrame {
             errorLabel.setText("Błędy: " + errorCount);
             for (int row = 0; row < SIZE; row++) {
                 for (int col = 0; col < SIZE; col++) {
-                    System.out.println(notes[row][col]);
                     if (notes[row][col] != null && !notes[row][col].isEmpty()){
                         displayNotesInCell(row, col);                        
                     }
@@ -401,7 +400,7 @@ public class SudokuGameScreen extends JFrame {
                     String storedUsername = user.getString("username");
                     JSONArray notesArray = user.getJSONArray("notes");
 
-                    List<Integer>[][] loadedNotes = new List[SIZE][SIZE]; // Tablica List<Integer>[][]
+                    List<Integer>[][] loadedNotes = new List[SIZE][SIZE];
         
                     if (storedUsername.equals(username)) {
                         JSONArray sudokuStateArray = user.getJSONArray("currentSudokuState");
@@ -422,29 +421,24 @@ public class SudokuGameScreen extends JFrame {
                                 }
                             }
                         }
-                        // Inicjalizuj tablicę
                         for (int row = 0; row < SIZE; row++) {
                             for (int col = 0; col < SIZE; col++) {
-                                loadedNotes[row][col] = new ArrayList<>(); // Inicjalizuj listę dla każdej komórki
+                                loadedNotes[row][col] = new ArrayList<>(); 
                             }
                         }
 
-                        // Przekształcamy "notesArray" do tablicy 2D List<Integer>[]
                         for (int row = 0; row < SIZE; row++) {
-                            JSONArray rowNotesArray = notesArray.getJSONArray(row); // Pobierz wiersz z "notes"
+                            JSONArray rowNotesArray = notesArray.getJSONArray(row); 
                             
                             for (int col = 0; col < SIZE; col++) {
-                                JSONArray noteArray = rowNotesArray.getJSONArray(col); // Pobierz komórkę z "notes"
+                                JSONArray noteArray = rowNotesArray.getJSONArray(col); 
                                 
-                                // Przekształcamy JSON array na listę Integer
                                 for (int j = 0; j < noteArray.length(); j++) {
-                                    int note = noteArray.getInt(j); // Pobierz liczbę z JSON
-                                    loadedNotes[row][col].add(note); // Dodaj do listy
+                                    int note = noteArray.getInt(j); 
+                                    loadedNotes[row][col].add(note);
                                 }
                             }
                         }
-
-                        // Zapisujemy dane do zmiennej notes
                         notes = loadedNotes;
                         break;
         
@@ -663,6 +657,16 @@ public class SudokuGameScreen extends JFrame {
         resetButtonColors(); 
         
         String cellValue = sudokuButtons[row][col].getText();
+
+        sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+        for (int k = 0; k < SIZE; k++) {
+            if (k != col) {
+                sudokuButtons[row][k].setBackground(ColorPalette.HIGHLIGHT_COLOR);
+            }
+            if (k != row) {
+                sudokuButtons[k][col].setBackground(ColorPalette.HIGHLIGHT_COLOR);
+            }
+        }
         
         if (!cellValue.isEmpty()) {
             for (int i = 0; i < SIZE; i++) {
@@ -673,7 +677,7 @@ public class SudokuGameScreen extends JFrame {
                     for (int value : notes[i][j]) {
                         if (String.valueOf(value).equals(cellValue)) {
 
-                            sudokuButtons[i][j].setBackground(ColorPalette.HIGHLIGHT_COLOR);
+                            sudokuButtons[i][j].setBackground(ColorPalette.HIGHLIGHT_NOTE_COLOR);
                         }
                     }
                     
@@ -682,15 +686,7 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     
-        sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
-        for (int k = 0; k < SIZE; k++) {
-            if (k != col) {
-                sudokuButtons[row][k].setBackground(ColorPalette.HIGHLIGHT_COLOR);
-            }
-            if (k != row) {
-                sudokuButtons[k][col].setBackground(ColorPalette.HIGHLIGHT_COLOR);
-            }
-        }
+        
     
         lastHighlightedButton = sudokuButtons[row][col];
     }
@@ -699,7 +695,7 @@ public class SudokuGameScreen extends JFrame {
     private void handleNumberButtonClick(int number) {
         JButton selectedButton = lastHighlightedButton;
         if (selectedButton == null) return;
-            
+
         int row = -1, col = -1;
         outerLoop:
         for (int i = 0; i < SIZE; i++) {
@@ -872,14 +868,12 @@ public class SudokuGameScreen extends JFrame {
         try {
             JSONArray gameDataList;
             
-            // Odczytaj istniejące dane
             try (FileReader reader = new FileReader("game_data.json")) {
                 gameDataList = new JSONArray(new JSONTokener(reader));
             } catch (IOException e) {
                 gameDataList = new JSONArray();
             }
 
-            // Znajdź maksymalne data_game_id
             int maxId = 0;
             for (int i = 0; i < gameDataList.length(); i++) {
                 JSONObject existingData = gameDataList.getJSONObject(i);
@@ -887,11 +881,10 @@ public class SudokuGameScreen extends JFrame {
                     maxId = Math.max(maxId, existingData.getInt("data_game_id"));
                 }
             }
-            int finalId = maxId + 1; // Obliczamy nowy ID tutaj
+            int finalId = maxId + 1;
 
 
-            // Przygotuj nowe dane gry
-            gameData.put("data_game_id", finalId); // Nowy ID
+            gameData.put("data_game_id", finalId);
             gameData.put("username", username);
             gameData.put("solveTime", solveTime);
             gameData.put("errorCount", errorCount);
@@ -901,10 +894,8 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
 
-            // Dodaj nowe dane do listy
             gameDataList.put(gameData);
 
-            // Zapisz zaktualizowaną listę do pliku
             try (FileWriter file = new FileWriter("game_data.json")) {
                 file.write(gameDataList.toString(4));
             }
@@ -1027,6 +1018,8 @@ public class SudokuGameScreen extends JFrame {
 
     private int[][] generateSudoku(int difficultyLevel) {
         int[][] sudoku = new int[SIZE][SIZE];
+        Arrays.fill(SolveSudoku, null);
+        Arrays.fill(initialSudoku, null);
         fillSudoku(sudoku, 0, 0);
         // Tworzymy kopię uzupelnionego stanu diagramu
         for (int i = 0; i < SIZE; i++) {
@@ -1034,10 +1027,12 @@ public class SudokuGameScreen extends JFrame {
         }
         initialFilledCount= getNumberOfCellsToKeep(difficultyLevel);
         removeCells(sudoku, 81- initialFilledCount);
+
         // Tworzymy kopię początkowego stanu diagramu
         for (int i = 0; i < SIZE; i++) {
             initialSudoku[i] = sudoku[i].clone();
         }
+
         switch (difficultyLevel) {
             case EASY:
                 difficultyLevelText = "Łatwy";
@@ -1072,28 +1067,23 @@ public class SudokuGameScreen extends JFrame {
         return false;
     }
     private boolean isSudokuValid(int[][] sudoku) {
-        // Iterujemy przez każdy wiersz i kolumnę
         for (int row = 0; row < sudoku.length; row++) {
             for (int col = 0; col < sudoku[row].length; col++) {
                 int num = sudoku[row][col];
     
-                // Jeśli komórka jest pusta, pomijamy ją (zakładamy, że puste komórki mają wartość 0)
                 if (num == 0) continue;
     
-                // Tymczasowo usuwamy liczbę z planszy, aby jej obecność nie wpłynęła na wynik walidacji
                 sudoku[row][col] = 0;
     
-                // Sprawdzamy, czy liczba jest zgodna z zasadami Sudoku
                 if (!isValid(sudoku, row, col, num)) {
-                    sudoku[row][col] = num; // Przywracamy wartość do planszy
-                    return false; // Tablica jest niepoprawna
+                    sudoku[row][col] = num; 
+                    return false;
                 }
     
-                // Przywracamy wartość liczby na planszy
                 sudoku[row][col] = num;
             }
         }
-        return true; // Jeśli nie znaleziono błędów, tablica jest poprawna
+        return true;
     }
     
 
@@ -1108,15 +1098,55 @@ public class SudokuGameScreen extends JFrame {
 
     private void removeCells(int[][] sudoku, int cellsToRemove) {
         Random random = new Random();
+        long startTime = System.currentTimeMillis();
+
         while (cellsToRemove > 0) {
             int row = random.nextInt(SIZE);
             int col = random.nextInt(SIZE);
+            if (System.currentTimeMillis() - startTime > 5000) {
+                System.out.println("Przekroczono czas generowania, rozpoczynam od nowa.");
+                int[][] newSudoku = generateSudoku(difficulty);
+                for (int i = 0; i < SIZE; i++) {
+                    System.arraycopy(newSudoku[i], 0, sudoku[i], 0, SIZE);
+                }
+                return;
+                }
+
             if (sudoku[row][col] != 0) {
+                int temp = sudoku[row][col];
                 sudoku[row][col] = 0;
-                cellsToRemove--;
+
+                if (!hasUniqueSolution(sudoku)) {
+                    sudoku[row][col] = temp; 
+                } else {
+                    cellsToRemove--;
+                }
             }
         }
     }
+
+    private boolean hasUniqueSolution(int[][] sudoku) {
+        return countSolutions(sudoku, 0, 0) == 1;
+    }
+
+    private int countSolutions(int[][] sudoku, int row, int col) {
+        if (row == SIZE - 1 && col == SIZE) return 1;
+        if (col == SIZE) { row++; col = 0; }
+        if (sudoku[row][col] != 0) return countSolutions(sudoku, row, col + 1);
+
+        int count = 0;
+        for (int num = 1; num <= SIZE; num++) {
+            if (isValid(sudoku, row, col, num)) {
+                sudoku[row][col] = num;
+                count += countSolutions(sudoku, row, col + 1);
+                if (count > 1) break;
+                sudoku[row][col] = 0;
+            }
+        }
+        sudoku[row][col] = 0; 
+        return count;
+    }
+
 
     
 
@@ -1141,7 +1171,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",4,false);
             screen.setVisible(true);
         });
     }
