@@ -103,6 +103,13 @@ public class SudokuMenu extends JFrame {
                     htpScreen.setVisible(true); 
                 });
             }
+            if (numer==5){
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    AboutApp screen = new AboutApp(username); 
+                    screen.setVisible(true); 
+                });
+            }
             if (numer==6){
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
