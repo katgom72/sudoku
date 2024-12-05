@@ -1,11 +1,6 @@
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.AbstractBorder;
 import java.awt.event.ActionEvent;
 
 
@@ -137,35 +131,7 @@ public class HowToPlay extends JFrame {
             screen.setVisible(true);
         });
     }
-    private static class RoundedBorder extends AbstractBorder {
-        private final int radius;
-        private final Color borderColor;
-
-        RoundedBorder(int radius, Color borderColor) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2.setColor(borderColor);
-            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 1, radius + 1);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c, Insets insets) {
-            insets.left = insets.right = insets.top = insets.bottom = radius + 1;
-            return insets;
-        }
-    }
+    
 
 
     private class BackgroundPanel extends JPanel {

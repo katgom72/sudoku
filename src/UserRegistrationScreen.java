@@ -8,18 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Base64;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.imageio.ImageIO;
 import javax.swing.text.AttributeSet;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 

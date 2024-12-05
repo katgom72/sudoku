@@ -1,38 +1,18 @@
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.AbstractBorder;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.PlainDocument;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 
 public class AboutApp extends JFrame {
@@ -51,9 +31,6 @@ public class AboutApp extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        
-
 
         addButton("Wróć do Menu", 540,1);
         addButton("Dodaj opinie", 600,2);
@@ -109,35 +86,6 @@ public class AboutApp extends JFrame {
             AboutApp screen = new AboutApp("username");
             screen.setVisible(true);
         });
-    }
-    private static class RoundedBorder extends AbstractBorder {
-        private final int radius;
-        private final Color borderColor;
-
-        RoundedBorder(int radius, Color borderColor) {
-            this.radius = radius;
-            this.borderColor = borderColor;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2.setColor(borderColor);
-            g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 1, radius + 1);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c, Insets insets) {
-            insets.left = insets.right = insets.top = insets.bottom = radius + 1;
-            return insets;
-        }
     }
 
 
