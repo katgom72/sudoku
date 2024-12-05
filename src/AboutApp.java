@@ -32,6 +32,7 @@ public class AboutApp extends JFrame {
             JOptionPane.showMessageDialog(this, "Image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
+
         addButton("Wróć do Menu", 540,1);
         addButton("Dodaj opinie", 600,2);
         
