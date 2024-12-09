@@ -722,13 +722,14 @@ public class SudokuGameScreen extends JFrame {
         }
     
         if (notesModeActive) {
-            if (notes[row][col].contains(number)) {
-                notes[row][col].remove(Integer.valueOf(number));
-            } else {
-                notes[row][col].add(number);
+            if (!originalValues[row][col]) {
+                if (notes[row][col].contains(number)) {
+                    notes[row][col].remove(Integer.valueOf(number));
+                } else {
+                    notes[row][col].add(number);
+                }
+                displayNotesInCell(row, col);
             }
-            
-            displayNotesInCell(row, col);
         } else {
             placeNumberInCell(row, col, number,false);
         }

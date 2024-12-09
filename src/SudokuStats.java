@@ -9,9 +9,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.List;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 
@@ -26,7 +28,7 @@ public class SudokuStats extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         try {
-            BufferedImage backgroundImage = ImageIO.read(new File("resources/background3.png"));
+            BufferedImage backgroundImage = ImageIO.read(new File("resources/s.png"));
             setContentPane(new BackgroundPanel(backgroundImage));
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,46 +40,117 @@ public class SudokuStats extends JFrame {
 
 
         JPanel statsPanel = new JPanel();
-        statsPanel.setBounds(50, 150, 330, 400);
-        statsPanel.setBackground(ColorPalette.BACKGROUND_COLOR); // Półprzezroczyste tło
+        statsPanel.setBounds(15, 80, 400, 550);
+        statsPanel.setOpaque(false);
 
-        // Dodanie statystyk
         addStats(statsPanel);
         add(statsPanel);
 
-
-        addButton("Wróć do Menu", 595);
+        addButton("Wróć do Menu", 660);
 
     }
     private void addStats(JPanel statsPanel) {
         Map<String, Long> bestTimes = getBestTimesForUser(username);
-        
-        // Ustawienie BoxLayout na pionowy układ
-        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS)); 
-        statsPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Wyrównanie do środka
+        Map<String, Long> averageTimes = getAverageTimesForUser(username);
+        Map<String, Integer> gamesCount = getGamesCountForUser(username);
+        Map<String, Integer> errorlessGamesCount = getErrorlessGamesCountForUser(username);
     
-        if (bestTimes.isEmpty()) {
-            JLabel noDataLabel = new JLabel("Brak danych dla tego użytkownika.", SwingConstants.CENTER);
-            noDataLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            noDataLabel.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
-            statsPanel.add(noDataLabel);
-        } else {
-            for (Map.Entry<String, Long> entry : bestTimes.entrySet()) {
-                String level = entry.getKey();
-                long time = entry.getValue();
-                JLabel statLabel = new JLabel(level + ": " + formatTime(time), SwingConstants.CENTER);
-                statLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-                statLabel.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
-                statLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Wyrównanie do środka
-                statsPanel.add(statLabel);
+        statsPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
     
-                // Możesz dodać przerwę między elementami, aby oddzielić statystyki
-                statsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-            }
-        }
-    }    
-    
+        // Nagłówki sekcji "Rozgrywki"
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(15, 5, 5, 5);
 
+        statsPanel.add(createHeaderLabel("Rozgrywki"), gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        statsPanel.add(createSubHeaderLabel("Poziom"), gbc);
+    
+        gbc.gridx = 1;
+        statsPanel.add(createSubHeaderLabel("Wszystkie"), gbc);
+    
+        gbc.gridx = 2;
+        statsPanel.add(createSubHeaderLabel("Bez błędów"), gbc);
+    
+        // Dane sekcji "Rozgrywki"
+        List<String> levels = Arrays.asList("Łatwy", "Średni", "Trudny", "Bardzo trudny");
+        for (int i = 0; i < levels.size(); i++) {
+            String level = levels.get(i);
+    
+            gbc.gridx = 0;
+            gbc.gridy++;
+            statsPanel.add(createDataLabel(level), gbc);
+    
+            gbc.gridx = 1;
+            int allGames = gamesCount.getOrDefault(level, 0);
+            statsPanel.add(createDataLabel(String.valueOf(allGames)), gbc);
+    
+            gbc.gridx = 2;
+            int errorlessGames = errorlessGamesCount.getOrDefault(level, 0);
+            statsPanel.add(createDataLabel(String.valueOf(errorlessGames)), gbc);
+        }
+
+    
+        // Nagłówki sekcji "Czas"
+        gbc.gridx = 1;
+        gbc.gridy++;
+        gbc.insets = new Insets(15, 5, 5, 5); 
+        statsPanel.add(createHeaderLabel("Czas"), gbc);
+    
+        gbc.gridx = 0;
+        gbc.gridy++;
+        statsPanel.add(createSubHeaderLabel("Poziom"), gbc);
+    
+        gbc.gridx = 1;
+        statsPanel.add(createSubHeaderLabel("Najlepszy"), gbc);
+    
+        gbc.gridx = 2;
+        statsPanel.add(createSubHeaderLabel("Średni"), gbc);
+    
+        // Dane sekcji "Czas"
+        for (int i = 0; i < levels.size(); i++) {
+            String level = levels.get(i);
+    
+            gbc.gridx = 0;
+            gbc.gridy++;
+            statsPanel.add(createDataLabel(level), gbc);
+    
+            gbc.gridx = 1;
+            String bestTime = bestTimes.containsKey(level) ? formatTime(bestTimes.get(level)) : "-";
+            statsPanel.add(createDataLabel(bestTime), gbc);
+    
+            gbc.gridx = 2;
+            String avgTime = averageTimes.containsKey(level) ? formatTime(averageTimes.get(level)) : "-";
+            statsPanel.add(createDataLabel(avgTime), gbc);
+        }
+    }
+    
+    private JLabel createHeaderLabel(String text) {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 25));
+        label.setForeground(ColorPalette.TEXT_DARK_GREEN);
+        return label;
+    }
+    
+    private JLabel createSubHeaderLabel(String text) {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.BOLD, 20));
+        label.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        return label;
+    }
+    
+    private JLabel createDataLabel(String text) {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setFont(new Font("Arial", Font.PLAIN, 17));
+        label.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
+        return label;
+    }
+    
     private Map<String, Long> getBestTimesForUser(String username) {
         Map<String, Long> bestTimes = new HashMap<>();
         try (FileReader reader = new FileReader("game_data.json")) {
@@ -88,7 +161,7 @@ public class SudokuStats extends JFrame {
                     continue;
                 }
                 String difficulty = gameData.getString("difficultyLevel");
-                long solveTime = gameData.getLong("solveTime"); // Odczyt jako long
+                long solveTime = gameData.getLong("solveTime"); 
                 bestTimes.put(difficulty, Math.min(bestTimes.getOrDefault(difficulty, Long.MAX_VALUE), solveTime));
             }
         } catch (IOException e) {
@@ -96,13 +169,85 @@ public class SudokuStats extends JFrame {
         }
         return bestTimes;
     }
+    private Map<String, Long> getAverageTimesForUser(String username) {
+        Map<String, Long> averageTimes = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<>(); 
+    
+        try (FileReader reader = new FileReader("game_data.json")) {
+            JSONArray dataArray = new JSONArray(new JSONTokener(reader));
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject gameData = dataArray.getJSONObject(i);
+                if (!gameData.getString("username").equals(username)) {
+                    continue;
+                }
+                String difficulty = gameData.getString("difficultyLevel");
+                long solveTime = gameData.getLong("solveTime");
+                
+                averageTimes.put(difficulty, averageTimes.getOrDefault(difficulty, 0L) + solveTime);
+                counts.put(difficulty, counts.getOrDefault(difficulty, 0) + 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        for (Map.Entry<String, Long> entry : averageTimes.entrySet()) {
+            String difficulty = entry.getKey();
+            long totalSolveTime = entry.getValue();
+            int count = counts.getOrDefault(difficulty, 1);
+            averageTimes.put(difficulty, totalSolveTime / count); 
+        }
+    
+        return averageTimes;
+    }
+    private Map<String, Integer> getGamesCountForUser(String username) {
+        Map<String, Integer> gamesCount = new HashMap<>();
+    
+        try (FileReader reader = new FileReader("game_data.json")) {
+            JSONArray dataArray = new JSONArray(new JSONTokener(reader));
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject gameData = dataArray.getJSONObject(i);
+                if (!gameData.getString("username").equals(username)) {
+                    continue;
+                }
+                String difficulty = gameData.getString("difficultyLevel");
+                gamesCount.put(difficulty, gamesCount.getOrDefault(difficulty, 0) + 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return gamesCount;
+    }
+    private Map<String, Integer> getErrorlessGamesCountForUser(String username) {
+        Map<String, Integer> errorlessGamesCount = new HashMap<>();
+    
+        try (FileReader reader = new FileReader("game_data.json")) {
+            JSONArray dataArray = new JSONArray(new JSONTokener(reader));
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject gameData = dataArray.getJSONObject(i);
+                if (!gameData.getString("username").equals(username)) {
+                    continue;
+                }
+                String difficulty = gameData.getString("difficultyLevel");
+                int errorsCount = gameData.getInt("errorCount"); 
+    
+                if (errorsCount == 0) {
+                    errorlessGamesCount.put(difficulty, errorlessGamesCount.getOrDefault(difficulty, 0) + 1);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return errorlessGamesCount;
+    }
     
 
     private String formatTime(long timeMillis) {
-        long totalSeconds = timeMillis / 1000; // Zamiana milisekund na całkowitą liczbę sekund
-        long minutes = totalSeconds / 60;     // Obliczenie minut
-        long seconds = totalSeconds % 60;     // Reszta sekund
-        return String.format("%02d:%02d", minutes, seconds); // Formatowanie z dwoma cyframi
+        long totalSeconds = timeMillis / 1000; 
+        long minutes = totalSeconds / 60;     
+        long seconds = totalSeconds % 60;     
+        return String.format("%02d:%02d", minutes, seconds); 
     }
     
     private void addButton(String text, int yPosition) {
@@ -163,45 +308,6 @@ public class SudokuStats extends JFrame {
             super.paintComponent(g);
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
         }
-    }
-}
-
-class RoundedScrollPane extends JPanel {
-    private final JScrollPane scrollPane;
-    private final int arcWidth;
-    private final int arcHeight;
-
-    public RoundedScrollPane(JScrollPane scrollPane, int arcWidth, int arcHeight, Color backgroundColor, Color borderColor) {
-        this.scrollPane = scrollPane;
-        this.arcWidth = arcWidth;
-        this.arcHeight = arcHeight;
-
-        // Ustawienie transparentnego tła dla scrollPane
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Usuń domyślne obramowanie
-
-        setLayout(new BorderLayout());
-        setBackground(backgroundColor);
-        setOpaque(false);
-        setBorder(BorderFactory.createLineBorder(borderColor, 2)); // Dodaj obramowanie
-
-        add(scrollPane, BorderLayout.CENTER);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Rysowanie zaokrąglonego tła
-        g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), arcWidth, arcHeight);
-
-        // Rysowanie zaokrąglonego obramowania
-        g2.setColor(getForeground());
-        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcWidth, arcHeight);
     }
 }
 
