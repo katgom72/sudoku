@@ -1,7 +1,6 @@
 import java.awt.Color;
 
 public class ColorPalette {
-    // Podstawowe kolory
     public static final Color TEXT_BLACK = new Color(0x000000);
     public static final Color TEXT_DARK_GREEN = new Color(0x00723b);
     public static final Color ICON_BORDER_COLOR = new Color(0x00bf63);

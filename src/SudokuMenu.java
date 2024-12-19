@@ -38,9 +38,9 @@ public class SudokuMenu extends JFrame {
         addButton("Graj", 245,1);
         addButton("Jak grać?", 315,2);
         addButton("Statystyki", 385,3);
-        addButton("Taktyki", 455,4);
-        addButton("O aplikacji", 525,5);
-        addButton("Wyloguj", 595,6);
+        //addButton("Taktyki", 455,4);
+        addButton("O aplikacji", 455,5);
+        addButton("Wyloguj", 525,6);
 
     }
 
@@ -53,12 +53,10 @@ public class SudokuMenu extends JFrame {
         button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button.setBorder(BorderFactory.createEmptyBorder());
 
-        // Zaokrąglone tło
         button.setContentAreaFilled(false);
         button.setOpaque(false);
         button.setUI(new RoundedButtonUI());
 
-        // Podświetlenie przy kliknięciu
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -100,7 +98,8 @@ public class SudokuMenu extends JFrame {
                     htpScreen.setVisible(true); 
                 });
             }
-            if(numer==3){
+            
+            if(numer==4){
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
                     SudokuStats screen = new SudokuStats(username); 

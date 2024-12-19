@@ -22,7 +22,7 @@ public class QuestionnaireScreen extends JFrame{
     private ButtonGroup q3;
     private ButtonGroup q4;
     private JSlider difficultySlider;
-    private JLabel difficultyLabel;  // Etykieta do wyświetlania wartości suwaka
+    private JLabel difficultyLabel; 
     private JLabel error1Label;
 
 
@@ -72,23 +72,20 @@ public class QuestionnaireScreen extends JFrame{
             difficultySlider.setFont(new Font("Arial", Font.BOLD, 14));
             difficultySlider.setForeground(ColorPalette.TEXT_LIGHT_GREEN);
     
-            // Dodajemy etykietę do wyświetlania wartości suwaka
             difficultyLabel = new JLabel(" " + difficultySlider.getValue());
             difficultyLabel.setBounds(197, y-30, 100, 40);
             difficultyLabel.setFont(new Font("Arial", Font.BOLD, 18));
             difficultyLabel.setForeground(ColorPalette.LOGO_COLOR);
             add(difficultyLabel);
     
-            // Wyświetlaj wybraną wartość na suwaku
             difficultySlider.addChangeListener(new ChangeListener() {
                 @Override
                 public void stateChanged(ChangeEvent e) {
                     int value = difficultySlider.getValue();
-                    difficultyLabel.setText(" "+value);  // Aktualizacja etykiety z wartością
+                    difficultyLabel.setText(" "+value);  
                 }
             });
     
-            // Dodajemy suwak do panelu
             add(difficultySlider);
         }
     
@@ -102,12 +99,10 @@ public class QuestionnaireScreen extends JFrame{
             button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
             button.setBorder(BorderFactory.createEmptyBorder());
 
-            // Zaokrąglone tło
             button.setContentAreaFilled(false);
             button.setOpaque(false);
             button.setUI(new RoundedButtonUI());
 
-            // Podświetlenie przy kliknięciu
             button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -165,15 +160,13 @@ public class QuestionnaireScreen extends JFrame{
             try {
                 JSONArray gameFeedbackDataList;
                 
-                // Odczytaj istniejące dane
                 try (FileReader reader = new FileReader("game__feedback_data.json")) {
                     gameFeedbackDataList = new JSONArray(new JSONTokener(reader));
                 } catch (IOException e) {
                     gameFeedbackDataList = new JSONArray();
                 }
 
-                // Przygotuj nowe dane gry
-                gameFeedbackData.put("data_game_id", finalId); // Nowy ID
+                gameFeedbackData.put("data_game_id", finalId);
                 gameFeedbackData.put("username", username);
                 gameFeedbackData.put("difficultyLevel", difficultyLevelText);
                 gameFeedbackData.put("a1", a1);
@@ -182,10 +175,8 @@ public class QuestionnaireScreen extends JFrame{
                 gameFeedbackData.put("a4", a4);
                 
 
-                // Dodaj nowe dane do listy
                 gameFeedbackDataList.put(gameFeedbackData);
 
-                // Zapisz zaktualizowaną listę do pliku
                 try (FileWriter file = new FileWriter("game__feedback_data.json")) {
                     file.write(gameFeedbackDataList.toString(4));
                 }
@@ -270,7 +261,6 @@ public class QuestionnaireScreen extends JFrame{
             add(a3Button);
       
         }
-        // Metoda tworząca niestandardową ikonę dla przycisku radiowego
         private Icon createRadioButtonIcon(Color color) {
             int size = 20;
             BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);

@@ -159,7 +159,6 @@ public class UserRegistrationScreen extends JFrame {
     }
     
     
-    // Metoda tworząca niestandardową ikonę dla przycisku radiowego
     private Icon createRadioButtonIcon(Color color) {
         int size = 20;
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -274,7 +273,6 @@ public class UserRegistrationScreen extends JFrame {
         userData.put("pin", pinHash);   
         userData.put("skillLevel", skillLevel);
 
-        // Wczytanie istniejącego pliku JSON
         File file = new File("registration_data.json");
         JSONArray usersArray = new JSONArray();
         if (file.exists()) {
@@ -286,12 +284,10 @@ public class UserRegistrationScreen extends JFrame {
             }
         }
 
-        // Dodanie nowego użytkownika
         usersArray.put(userData);
 
-        // Zapisanie pliku JSON
         try (FileWriter writer = new FileWriter(file)) {
-            writer.write(usersArray.toString(4));  // Zapisz z wcięciami
+            writer.write(usersArray.toString(4)); 
         } catch (IOException e) {
             e.printStackTrace();
         }

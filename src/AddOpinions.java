@@ -140,7 +140,6 @@ public class AddOpinions extends JFrame {
         opinionData.put("username", username);
         opinionData.put("opinia", opinia);   
 
-        // Wczytanie istniejącego pliku JSON
         File file = new File("opionions_data.json");
         JSONArray opinionsArray = new JSONArray();
         if (file.exists()) {
@@ -152,12 +151,10 @@ public class AddOpinions extends JFrame {
             }
         }
 
-        // Dodanie nowego użytkownika
         opinionsArray.put(opinionData);
 
-        // Zapisanie pliku JSON
         try (FileWriter writer = new FileWriter(file)) {
-            writer.write(opinionsArray.toString(4));  // Zapisz z wcięciami
+            writer.write(opinionsArray.toString(4));  
         } catch (IOException e) {
             e.printStackTrace();
         }

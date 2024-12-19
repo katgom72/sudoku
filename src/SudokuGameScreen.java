@@ -628,18 +628,16 @@ public class SudokuGameScreen extends JFrame {
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
-            // Aktualizuj licznik liczb
             if (currentValue != 0) {
                 numberCount[currentValue]--;
             }
     
-            // Cofanie operacji w zależności od typu ruchu
             if (lastMove.previousValue == 0) {
                 if (lastMove.isNotes == 0) {
-                    button.setText(""); // Pusta komórka
+                    button.setText("");
                 } else if (lastMove.isNotes == 1) {
-                    notes[lastMove.row][lastMove.col] = new ArrayList<>(lastMove.notes); // Przywróć notatki
-                    displayNotesInCell(lastMove.row, lastMove.col); // Wyświetl notatki
+                    notes[lastMove.row][lastMove.col] = new ArrayList<>(lastMove.notes); 
+                    displayNotesInCell(lastMove.row, lastMove.col);
                 }
             } else {
                 button.setText(String.valueOf(lastMove.previousValue));

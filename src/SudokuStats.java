@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 
@@ -259,12 +258,10 @@ public class SudokuStats extends JFrame {
         button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
         button.setBorder(BorderFactory.createEmptyBorder());
 
-        // Zaokrąglone tło
         button.setContentAreaFilled(false);
         button.setOpaque(false);
         button.setUI(new RoundedButtonUI());
 
-        // Podświetlenie przy kliknięciu
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
