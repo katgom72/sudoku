@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import ui.RoundedButtonUI;
+
 
 public class AboutApp extends JFrame {
     private String username;

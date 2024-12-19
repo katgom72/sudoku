@@ -2,6 +2,9 @@ import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import ui.RoundedButtonUI;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -37,6 +40,7 @@ public class SudokuGameScreen extends JFrame {
     private int[] numberCount = new int[SIZE + 1]; 
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
+    @SuppressWarnings("unchecked")
     private List<Integer>[][] notes = new List[SIZE][SIZE];
     private int[][] currentSudokuState = new int[SIZE][SIZE]; 
 
@@ -400,6 +404,7 @@ public class SudokuGameScreen extends JFrame {
                     String storedUsername = user.getString("username");
                     JSONArray notesArray = user.getJSONArray("notes");
 
+                    @SuppressWarnings("unchecked")
                     List<Integer>[][] loadedNotes = new List[SIZE][SIZE];
         
                     if (storedUsername.equals(username)) {
@@ -1209,7 +1214,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",4,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
             screen.setVisible(true);
         });
     }

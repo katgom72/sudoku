@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import ui.RoundedButtonUI;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,7 +13,9 @@ import javax.imageio.ImageIO;
 public class EndGameScreen extends JFrame{
     private String username;
     private String difficultyLevelText;
+    @SuppressWarnings("unused")
     private long solveTime;
+    @SuppressWarnings("unused")
     private int errorCount;
     private int finalId;
     public EndGameScreen(String username, String difficultyLevelText, long solveTime,int errorCount, int finalId) {

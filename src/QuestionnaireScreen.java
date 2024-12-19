@@ -12,6 +12,9 @@ import java.io.FileReader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import ui.RoundedButtonUI;
+
 import java.io.FileWriter;
 
 public class QuestionnaireScreen extends JFrame{
@@ -35,6 +38,8 @@ public class QuestionnaireScreen extends JFrame{
             setSize(432, 768);
             setResizable(false);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLocationRelativeTo(null);
+
 
             try {
                 BufferedImage backgroundImage = ImageIO.read(new File("resources/7.png"));
