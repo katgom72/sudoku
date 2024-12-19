@@ -605,13 +605,16 @@ public class SudokuGameScreen extends JFrame {
     }
 
     private class Move {
-        int row, col, previousValue;
-
-
-        public Move(int row, int col, int previousValue) {
+        int row, col, previousValue, isNotes;
+        private List<Integer> notes;
+        
+        
+        public Move(int row, int col, int previousValue, int isNotes, List<Integer> notes) {
             this.row = row;
             this.col = col;
             this.previousValue = previousValue;
+            this.isNotes =isNotes;
+            this.notes = notes;
         }
 
     }
@@ -619,25 +622,34 @@ public class SudokuGameScreen extends JFrame {
         if (!moveStack.isEmpty()) {
             Move lastMove = moveStack.pop();
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
-            
-            
+            clearNotesInCell(lastMove.row,lastMove.col);
+
+    
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
+            // Aktualizuj licznik liczb
             if (currentValue != 0) {
                 numberCount[currentValue]--;
             }
     
+            // Cofanie operacji w zależności od typu ruchu
             if (lastMove.previousValue == 0) {
-                button.setText("");
+                if (lastMove.isNotes == 0) {
+                    button.setText(""); // Pusta komórka
+                } else if (lastMove.isNotes == 1) {
+                    notes[lastMove.row][lastMove.col] = new ArrayList<>(lastMove.notes); // Przywróć notatki
+                    displayNotesInCell(lastMove.row, lastMove.col); // Wyświetl notatki
+                }
             } else {
                 button.setText(String.valueOf(lastMove.previousValue));
-                numberCount[lastMove.previousValue]++; 
+                numberCount[lastMove.previousValue]++;
             }
     
             updateNumberButtonStates();
         }
     }
+    
     private void clearHighlightedCell() {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
@@ -645,6 +657,7 @@ public class SudokuGameScreen extends JFrame {
     
             if (!originalValues[row][col]) {
                 if (isNotesActiveInCell(row, col)) {
+                    moveStack.push(new Move(row, col, 0,1,notes[row][col]));
                     clearNotesInCell(row, col); 
                 }
     
@@ -655,7 +668,7 @@ public class SudokuGameScreen extends JFrame {
                     numberCount[currentValue]--; 
                 }
     
-                moveStack.push(new Move(row, col, currentValue));
+                moveStack.push(new Move(row, col, currentValue,0,notes[row][col]));
     
                 lastHighlightedButton.setText("");
     
@@ -706,6 +719,9 @@ public class SudokuGameScreen extends JFrame {
     
 
     private void handleNumberButtonClick(int number) {
+        List<Integer> notes1 = new ArrayList<>();
+        int n=0;
+        int x=0;
         JButton selectedButton = lastHighlightedButton;
         if (selectedButton == null) return;
 
@@ -723,11 +739,16 @@ public class SudokuGameScreen extends JFrame {
     
         if (notesModeActive) {
             if (!originalValues[row][col]) {
+                notes1 = new ArrayList<>(notes[row][col]);
                 if (notes[row][col].contains(number)) {
+                    n=1;
                     notes[row][col].remove(Integer.valueOf(number));
                 } else {
+                    n=1;
                     notes[row][col].add(number);
                 }
+                moveStack.push(new Move(row, col, x, n, new ArrayList<>(notes1)));
+
                 displayNotesInCell(row, col);
             }
         } else {
@@ -736,22 +757,27 @@ public class SudokuGameScreen extends JFrame {
     }
     private void placeNumberInCell(int row, int col, int number,boolean load) {
         if (originalValues[row][col]) return; 
+        int n=0;
+        List<Integer> notes1 = new ArrayList<>();
     
         JButton button = sudokuButtons[row][col];
-
-
-        clearNotesInCell(row, col);
-
-
+        if(isNotesActiveInCell(row,col)){
+            notes1 = new ArrayList<>(notes[row][col]);
+            clearNotesInCell(row, col);
+            n=1;
+        }
         String currentText = button.getText();
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+        
         if (currentValue != number) {
-            moveStack.push(new Move(row, col, currentValue));
+            moveStack.push(new Move(row, col, currentValue, n, notes1));
+            clearNotesInCell(row, col);
         }
         if (currentValue != 0) {
             numberCount[currentValue]--;
+
         }
-    
+
         button.setText(String.valueOf(number));
         button.setFont(new Font("Arial", Font.BOLD, 24));
         button.setForeground(ColorPalette.TEXT_DARK_GREEN);

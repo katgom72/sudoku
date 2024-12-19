@@ -52,5 +52,23 @@
         "difficultyLevel": "Średni",
         "data_game_id": 5,
         "username": "username"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 40,
+        "a3": "Na tym samym poziomie",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 6,
+        "username": "username"
+    },
+    {
+        "a1": "Satysfakcjonująca",
+        "a2": 50,
+        "a3": "Na tym samym poziomie",
+        "a4": "Relaksujące, spokojniejsze",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 7,
+        "username": "username"
     }
 ]
