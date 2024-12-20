@@ -669,6 +669,7 @@ public class SudokuGameScreen extends JFrame {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
             int col = lastHighlightedButton.getX() / 40;
+            @SuppressWarnings("unchecked")
             List<Integer>[][] notes1 = new List[SIZE][SIZE];
             for (int r = 0; r < SIZE; r++) {
                 for (int c = 0; c < SIZE; c++) {
@@ -760,6 +761,7 @@ public class SudokuGameScreen extends JFrame {
     
         if (notesModeActive) {
             if (!originalValues[row][col]) {
+                @SuppressWarnings("unchecked")
                 List<Integer>[][] notes1 = new List[SIZE][SIZE];
                 for (int r = 0; r < SIZE; r++) {
                     for (int c = 0; c < SIZE; c++) {
@@ -785,6 +787,7 @@ public class SudokuGameScreen extends JFrame {
         if (originalValues[row][col]) return; 
         int n=0;
 
+        @SuppressWarnings("unchecked")
         List<Integer>[][] notes1 = new List[SIZE][SIZE];
         for (int r = 0; r < SIZE; r++) {
             for (int c = 0; c < SIZE; c++) {
