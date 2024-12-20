@@ -611,10 +611,10 @@ public class SudokuGameScreen extends JFrame {
 
     private class Move {
         int row, col, previousValue, isNotes;
-        private List<Integer> notes;
+        private List<Integer> [][] notes;
         
         
-        public Move(int row, int col, int previousValue, int isNotes, List<Integer> notes) {
+        public Move(int row, int col, int previousValue, int isNotes, List<Integer>[][] notes) {
             this.row = row;
             this.col = col;
             this.previousValue = previousValue;
@@ -627,24 +627,36 @@ public class SudokuGameScreen extends JFrame {
         if (!moveStack.isEmpty()) {
             Move lastMove = moveStack.pop();
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
-            clearNotesInCell(lastMove.row,lastMove.col);
 
     
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+            clearNotesInCell(lastMove.row,lastMove.col);
+
     
             if (currentValue != 0) {
                 numberCount[currentValue]--;
             }
     
             if (lastMove.previousValue == 0) {
+
                 if (lastMove.isNotes == 0) {
+
                     button.setText("");
                 } else if (lastMove.isNotes == 1) {
-                    notes[lastMove.row][lastMove.col] = new ArrayList<>(lastMove.notes); 
-                    displayNotesInCell(lastMove.row, lastMove.col);
+
+                    for (int r = 0; r < SIZE; r++) {
+                        for (int c = 0; c < SIZE; c++) {
+                            if (lastMove.notes[r][c] != null && !lastMove.notes[r][c].isEmpty()) {
+                                notes[r][c] = lastMove.notes[r][c] == null ? null : new ArrayList<>(lastMove.notes[r][c]);
+                                displayNotesInCell(r, c);
+                            }                            
+
+                        }
+                    }
                 }
             } else {
+
                 button.setText(String.valueOf(lastMove.previousValue));
                 numberCount[lastMove.previousValue]++;
             }
@@ -657,10 +669,17 @@ public class SudokuGameScreen extends JFrame {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
             int col = lastHighlightedButton.getX() / 40;
+            List<Integer>[][] notes1 = new List[SIZE][SIZE];
+            for (int r = 0; r < SIZE; r++) {
+                for (int c = 0; c < SIZE; c++) {
+                    notes1[r][c] = notes[r][c] == null ? null : new ArrayList<>(notes[r][c]);
+                }
+            }
+
     
             if (!originalValues[row][col]) {
                 if (isNotesActiveInCell(row, col)) {
-                    moveStack.push(new Move(row, col, 0,1,notes[row][col]));
+                    moveStack.push(new Move(row, col, 0,1,notes1));
                     clearNotesInCell(row, col); 
                 }
     
@@ -671,7 +690,7 @@ public class SudokuGameScreen extends JFrame {
                     numberCount[currentValue]--; 
                 }
     
-                moveStack.push(new Move(row, col, currentValue,0,notes[row][col]));
+                moveStack.push(new Move(row, col, currentValue,0,notes1));
     
                 lastHighlightedButton.setText("");
     
@@ -722,7 +741,6 @@ public class SudokuGameScreen extends JFrame {
     
 
     private void handleNumberButtonClick(int number) {
-        List<Integer> notes1 = new ArrayList<>();
         int n=0;
         int x=0;
         JButton selectedButton = lastHighlightedButton;
@@ -742,7 +760,12 @@ public class SudokuGameScreen extends JFrame {
     
         if (notesModeActive) {
             if (!originalValues[row][col]) {
-                notes1 = new ArrayList<>(notes[row][col]);
+                List<Integer>[][] notes1 = new List[SIZE][SIZE];
+                for (int r = 0; r < SIZE; r++) {
+                    for (int c = 0; c < SIZE; c++) {
+                        notes1[r][c] = notes[r][c] == null ? null : new ArrayList<>(notes[r][c]);
+                    }
+                }
                 if (notes[row][col].contains(number)) {
                     n=1;
                     notes[row][col].remove(Integer.valueOf(number));
@@ -750,7 +773,7 @@ public class SudokuGameScreen extends JFrame {
                     n=1;
                     notes[row][col].add(number);
                 }
-                moveStack.push(new Move(row, col, x, n, new ArrayList<>(notes1)));
+                moveStack.push(new Move(row, col, x, n, notes1));
 
                 displayNotesInCell(row, col);
             }
@@ -761,11 +784,16 @@ public class SudokuGameScreen extends JFrame {
     private void placeNumberInCell(int row, int col, int number,boolean load) {
         if (originalValues[row][col]) return; 
         int n=0;
-        List<Integer> notes1 = new ArrayList<>();
+
+        List<Integer>[][] notes1 = new List[SIZE][SIZE];
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
+                notes1[r][c] = notes[r][c] == null ? null : new ArrayList<>(notes[r][c]);
+            }
+        }
     
         JButton button = sudokuButtons[row][col];
         if(isNotesActiveInCell(row,col)){
-            notes1 = new ArrayList<>(notes[row][col]);
             clearNotesInCell(row, col);
             n=1;
         }
@@ -879,7 +907,7 @@ public class SudokuGameScreen extends JFrame {
                     JButton button = sudokuButtons[row][col];
                     button.setText("");
                 }
-                
+                notes[row][col] = new ArrayList<>();
             }
         }
         for (int i = 1; i < numberCount.length; i++) {

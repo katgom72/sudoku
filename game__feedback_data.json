@@ -1,1 +1,47 @@
-[]
+[
+    {
+        "a1": "Za łatwa",
+        "a2": 5,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Łatwy",
+        "data_game_id": 2,
+        "username": "user1"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 11,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Średni",
+        "data_game_id": 3,
+        "username": "user1"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 20,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 4,
+        "username": "user1"
+    },
+    {
+        "a1": "Satysfakcjonująca",
+        "a2": 26,
+        "a3": "Na tym samym poziomie",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 5,
+        "username": "user1"
+    },
+    {
+        "a1": "Satysfakcjonująca",
+        "a2": 37,
+        "a3": "Na tym samym poziomie",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 6,
+        "username": "user1"
+    }
+]
