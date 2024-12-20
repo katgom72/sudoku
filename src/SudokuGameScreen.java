@@ -628,12 +628,15 @@ public class SudokuGameScreen extends JFrame {
             Move lastMove = moveStack.pop();
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
 
-    
+            if(isNotesActiveInCell(lastMove.row,lastMove.col)){
+                clearNotesInCell(lastMove.row,lastMove.col);
+            }
+
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
             clearNotesInCell(lastMove.row,lastMove.col);
 
-    
+
             if (currentValue != 0) {
                 numberCount[currentValue]--;
             }
@@ -644,10 +647,10 @@ public class SudokuGameScreen extends JFrame {
 
                     button.setText("");
                 } else if (lastMove.isNotes == 1) {
-
                     for (int r = 0; r < SIZE; r++) {
                         for (int c = 0; c < SIZE; c++) {
                             if (lastMove.notes[r][c] != null && !lastMove.notes[r][c].isEmpty()) {
+                                clearNotesInCell(r,c);
                                 notes[r][c] = lastMove.notes[r][c] == null ? null : new ArrayList<>(lastMove.notes[r][c]);
                                 displayNotesInCell(r, c);
                             }                            
