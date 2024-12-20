@@ -56,7 +56,15 @@ public class EndGameScreen extends JFrame{
 
             levelLabel2.setFont(new Font("Arial", Font.BOLD, 25));
             levelLabel2.setForeground(ColorPalette.LOGO_COLOR);
-            levelLabel2.setBounds(180, 370, 300, 40);
+            if (difficultyLevelText=="Łatwy"){
+                levelLabel2.setBounds(180, 370, 300, 40);
+            }
+            if(difficultyLevelText=="Średni" || difficultyLevelText=="Trudny"){
+                levelLabel2.setBounds(175, 370, 300, 40);
+            }
+            if(difficultyLevelText=="Bardzo trudny"){
+                levelLabel2.setBounds(130, 370, 300, 40);
+            }
             add(levelLabel2);
 
             timeLabel.setFont(new Font("Arial", Font.BOLD, 22));
@@ -129,7 +137,7 @@ public class EndGameScreen extends JFrame{
 
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
-                EndGameScreen screen = new EndGameScreen("username","Łatwy",000000,0,0);
+                EndGameScreen screen = new EndGameScreen("username","Bardzo trudny",000000,0,0);
                 screen.setVisible(true);
             });
         }
