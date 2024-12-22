@@ -77,7 +77,7 @@ public class AboutApp extends JFrame {
             if (a==2){
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
-                    AddOpinions screen = new AddOpinions(username); 
+                    AddOpinions screen = new AddOpinions(username,1); 
                     screen.setVisible(true); 
                 });
             }

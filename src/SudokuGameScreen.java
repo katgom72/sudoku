@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import java.util.Stack;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -92,7 +94,7 @@ public class SudokuGameScreen extends JFrame {
         }
 
         if(!unfinished){
-            sudokuBoard = generateSudoku(difficulty);
+            sudokuBoard = generateSudokuWithDialog(difficulty);
         }else{
             try (FileReader reader = new FileReader("game_state.json")) {
                 JSONTokener tokener = new JSONTokener(reader);
@@ -470,10 +472,14 @@ public class SudokuGameScreen extends JFrame {
         JButton button1 = new JButton("Zacznij od nowa");
         JButton button2 = new JButton("Nowa gra");
         JButton button3 = new JButton("Zmniejsz poziom");
+        JButton button4 = new JButton("Zgłoś błąd");
+
     
         button1.setPreferredSize(new Dimension(300, 60));
         button2.setPreferredSize(new Dimension(300, 60));
         button3.setPreferredSize(new Dimension(300, 60));
+        button4.setPreferredSize(new Dimension(300, 60));
+
     
         button1.setFont(new Font("Arial", Font.BOLD, 20));
         button1.setFocusPainted(false);
@@ -506,6 +512,16 @@ public class SudokuGameScreen extends JFrame {
         button3.setOpaque(false);
         button3.setUI(new RoundedButtonUI());
 
+        button4.setFont(new Font("Arial", Font.BOLD, 20));
+        button4.setFocusPainted(false);
+        button4.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button4.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button4.setBorder(BorderFactory.createEmptyBorder());
+    
+        button4.setContentAreaFilled(false);
+        button4.setOpaque(false);
+        button4.setUI(new RoundedButtonUI());
+
         button1.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -516,6 +532,25 @@ public class SudokuGameScreen extends JFrame {
             public void mouseReleased(MouseEvent e) {
                 button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
+        });
+        button4.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button1.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+        button4.addActionListener(e -> {
+            dialog.dispose();
+            SwingUtilities.invokeLater(() -> {
+                AddOpinions screen = new AddOpinions(username,0); 
+                screen.setVisible(true); 
+            });
+        
         });
         button2.addActionListener(e -> {
             removeExistingEntry(username);
@@ -572,10 +607,11 @@ public class SudokuGameScreen extends JFrame {
         panel.add(button1);
         panel.add(button2);
         panel.add(button3);
+        panel.add(button4);
     
         dialog.add(panel);
     
-        dialog.setSize(370, 250); 
+        dialog.setSize(370, 320); 
     
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
@@ -659,7 +695,16 @@ public class SudokuGameScreen extends JFrame {
                     }
                 }
             } else {
+                for (int r = 0; r < SIZE; r++) {
+                    for (int c = 0; c < SIZE; c++) {
+                        if (lastMove.notes[r][c] != null && !lastMove.notes[r][c].isEmpty()) {
+                            clearNotesInCell(r,c);
+                            notes[r][c] = lastMove.notes[r][c] == null ? null : new ArrayList<>(lastMove.notes[r][c]);
+                            displayNotesInCell(r, c);
+                        }                            
 
+                    }
+                }
                 button.setText(String.valueOf(lastMove.previousValue));
                 numberCount[lastMove.previousValue]++;
             }
@@ -1092,6 +1137,70 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     }
+    private int[][] generateSudokuWithDialog(int difficultyLevel) {
+        String[] imagePaths = {
+            "resources/l1.png",
+            "resources/l2.png",
+            "resources/l3.png",
+            "resources/l4.png",
+            "resources/l5.png",
+            "resources/l6.png",
+            "resources/l7.png",
+            "resources/l8.png",
+
+        };
+    
+        int imageWidth = 432;  
+        int imageHeight = 768; 
+    
+        JDialog loadingDialog = new JDialog((Frame) null, "Generating Sudoku", true);
+        loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        loadingDialog.setSize(432, 768);
+        loadingDialog.setLocationRelativeTo(null);
+    
+        JLabel loadingImage = new JLabel();
+    
+        Timer imageRotationTimer = new Timer(120, new ActionListener() {
+            int currentIndex = 0;
+    
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentIndex = (currentIndex + 1) % imagePaths.length; 
+    
+                ImageIcon icon = new ImageIcon(imagePaths[currentIndex]);
+                Image scaledImage = icon.getImage().getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH);
+                loadingImage.setIcon(new ImageIcon(scaledImage));
+            }
+        });
+    
+        loadingDialog.add(loadingImage);
+    
+        SwingWorker<int[][], Void> worker = new SwingWorker<>() {
+            @Override
+            protected int[][] doInBackground() throws Exception {
+                imageRotationTimer.start(); 
+                return generateSudoku(difficultyLevel); 
+            }
+    
+            @Override
+            protected void done() {
+                
+                imageRotationTimer.stop(); 
+                loadingDialog.dispose(); 
+            }
+        };
+    
+        worker.execute();
+        loadingDialog.setVisible(true);
+    
+        try {
+            return worker.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
 
     private int[][] generateSudoku(int difficultyLevel) {
         int[][] sudoku = new int[SIZE][SIZE];
@@ -1248,7 +1357,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",4,false);
             screen.setVisible(true);
         });
     }

@@ -32,12 +32,14 @@ import ui.RoundedButtonUI;
 
 public class AddOpinions extends JFrame {
     private String username;
+    private int b;
     private JTextArea opinia;
     private JLabel error1Label;
 
 
-    public AddOpinions(String username) {
+    public AddOpinions(String username, int b) {
         this.username = username;
+        this.b=b;
         setSize(432, 768); 
         setResizable(false); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,8 +60,12 @@ public class AddOpinions extends JFrame {
         error1Label.setVisible(false); 
         add(error1Label);
 
-
-        addButton("Wróć do Menu", 660,1);
+        if(b==1){ //Opinie otwierane z menu
+            addButton("Wróć do Menu", 660,1);
+        }
+        if(b==0){ //Opinie otwierane w trakcie rozgrywki
+            addButton("Wróć do gry", 660,1);
+        }
         addButton("Dodaj opinie", 600,2);
         
         setLocationRelativeTo(null); 
@@ -107,11 +113,17 @@ public class AddOpinions extends JFrame {
         });
         button.addActionListener(e -> {
             if (a==1){
-                dispose(); 
-                SwingUtilities.invokeLater(() -> {
-                    SudokuMenu menuScreen = new SudokuMenu(username); 
-                    menuScreen.setVisible(true); 
-                });
+                if(b==1){
+                    dispose(); 
+                    SwingUtilities.invokeLater(() -> {
+                        SudokuMenu menuScreen = new SudokuMenu(username); 
+                        menuScreen.setVisible(true); 
+                    });
+                }
+                if(b==0){
+                    dispose();
+                }
+                
             }
             if (a==2){
                 boolean valid = true;
@@ -126,10 +138,13 @@ public class AddOpinions extends JFrame {
                 if(valid){
                     saveOpinionsData(username,opiniaText);
                     dispose(); 
-                    SwingUtilities.invokeLater(() -> {
-                        SudokuMenu menuScreen = new SudokuMenu(username); 
-                        menuScreen.setVisible(true); 
-                    });
+                    if(b==1){
+                        SwingUtilities.invokeLater(() -> {
+                            SudokuMenu menuScreen = new SudokuMenu(username); 
+                            menuScreen.setVisible(true); 
+                        });
+                    }
+                    
                 }
             }
         
@@ -165,7 +180,7 @@ public class AddOpinions extends JFrame {
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            AddOpinions screen = new AddOpinions("username");
+            AddOpinions screen = new AddOpinions("username", 0);
             screen.setVisible(true);
         });
     }
