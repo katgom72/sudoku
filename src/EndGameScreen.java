@@ -24,6 +24,8 @@ public class EndGameScreen extends JFrame{
             this.solveTime = solveTime;
             this.errorCount = errorCount;
             this.finalId = finalId;
+            System.out.println(difficultyLevelText);
+            System.out.println(difficultyLevelText);
 
             setSize(432, 768);
             setResizable(false);
@@ -56,14 +58,21 @@ public class EndGameScreen extends JFrame{
 
             levelLabel2.setFont(new Font("Arial", Font.BOLD, 25));
             levelLabel2.setForeground(ColorPalette.LOGO_COLOR);
+            System.out.println(difficultyLevelText=="Łatwy");
             if (difficultyLevelText=="Łatwy"){
+                System.out.println("i1");
                 levelLabel2.setBounds(180, 370, 300, 40);
-            }
-            if(difficultyLevelText=="Średni" || difficultyLevelText=="Trudny"){
+            }else if(difficultyLevelText=="Średni" || difficultyLevelText=="Trudny"){
+                System.out.println("i2");
+
                 levelLabel2.setBounds(175, 370, 300, 40);
-            }
-            if(difficultyLevelText=="Bardzo trudny"){
+            }else if(difficultyLevelText=="Bardzo trudny"){
+                System.out.println("i3");
+
                 levelLabel2.setBounds(130, 370, 300, 40);
+            }else{
+                levelLabel2.setBounds(180, 370, 300, 40);
+
             }
             add(levelLabel2);
 
@@ -137,7 +146,7 @@ public class EndGameScreen extends JFrame{
 
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
-                EndGameScreen screen = new EndGameScreen("username","Bardzo trudny",000000,0,0);
+                EndGameScreen screen = new EndGameScreen("username","Łatwy",000000,0,0);
                 screen.setVisible(true);
             });
         }

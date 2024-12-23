@@ -847,6 +847,8 @@ public class SudokuGameScreen extends JFrame {
         if(isNotesActiveInCell(row,col)){
             clearNotesInCell(row, col);
             n=1;
+        }else{
+            sudokuBoard[row][col] = number;
         }
         String currentText = button.getText();
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
@@ -1274,6 +1276,7 @@ public class SudokuGameScreen extends JFrame {
     
 
     private boolean isValid(int[][] sudoku, int row, int col, int num) {
+        System.out.printf("Checking row: %d, col: %d, num: %d%n", row, col, num);
         for (int x = 0; x < SIZE; x++) {
             if (sudoku[row][x] == num || sudoku[x][col] == num || sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num) {
                 return false;
@@ -1281,6 +1284,7 @@ public class SudokuGameScreen extends JFrame {
         }
         return true;
     }
+    
 
     private void removeCells(int[][] sudoku, int cellsToRemove) {
         Random random = new Random();
@@ -1357,7 +1361,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",4,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
             screen.setVisible(true);
         });
     }
