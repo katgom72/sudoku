@@ -32,6 +32,8 @@ public class SudokuGameScreen extends JFrame {
     private int difficulty;
     private boolean unfinished;
     private Stack<Move> moveStack = new Stack<>(); 
+    private Stack<Move> moveStack2 = new Stack<>(); 
+
     private static final int SIZE = 9;
     private int[][] sudokuBoard;
     private JButton[][] sudokuButtons;
@@ -42,6 +44,8 @@ public class SudokuGameScreen extends JFrame {
     private int[] numberCount = new int[SIZE + 1]; 
     private JButton[] numberButtons = new JButton[SIZE]; 
     private boolean notesModeActive = false;
+    private boolean hintModeActive = false;
+
     @SuppressWarnings("unchecked")
     private List<Integer>[][] notes = new List[SIZE][SIZE];
     private int[][] currentSudokuState = new int[SIZE][SIZE]; 
@@ -51,6 +55,12 @@ public class SudokuGameScreen extends JFrame {
 
     private ImageIcon notesIconActive;
     private ImageIcon notesIconInactive;
+
+    private ImageIcon hintIconActive;
+    private ImageIcon hintIconInactive;
+    private int hintCount = 0; // Licznik wykorzystanych podpowiedzi
+
+
 
     private long startTime;
     private Timer timer;
@@ -222,7 +232,7 @@ public class SudokuGameScreen extends JFrame {
         try {
             BufferedImage undoIcon = ImageIO.read(new File("resources/undo.png"));
             JButton undoButton = new JButton(new ImageIcon(undoIcon));
-            undoButton.setBounds(60, 580, 50, 50);
+            undoButton.setBounds(30, 580, 50, 50);
             undoButton.setContentAreaFilled(false);
             undoButton.setBorderPainted(false);
             undoButton.setOpaque(false);
@@ -239,11 +249,12 @@ public class SudokuGameScreen extends JFrame {
             e.printStackTrace(); 
             JOptionPane.showMessageDialog(this, "Undo image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        
         // Przycisk wymazywania
         try {
             BufferedImage clearIcon = ImageIO.read(new File("resources/clear.png")); 
             JButton clearButton = new JButton(new ImageIcon(clearIcon));
-            clearButton.setBounds(190, 580, 50, 50); 
+            clearButton.setBounds(137, 580, 50, 50); 
             clearButton.setContentAreaFilled(false);
             clearButton.setBorderPainted(false);
             clearButton.setOpaque(false);
@@ -266,7 +277,7 @@ public class SudokuGameScreen extends JFrame {
             notesIconInactive = new ImageIcon(ImageIO.read(new File("resources/notes.png")));
             notesIconActive = new ImageIcon(ImageIO.read(new File("resources/notes_active.png"))); 
             JButton notesButton = new JButton(notesIconInactive);
-            notesButton.setBounds(330, 580, 50, 50); 
+            notesButton.setBounds(244, 580, 50, 50); 
             notesButton.setContentAreaFilled(false);
             notesButton.setBorderPainted(false);
             notesButton.setOpaque(false);
@@ -289,6 +300,37 @@ public class SudokuGameScreen extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Notes image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Przycisk podpowiedzi
+        try {
+            hintIconInactive = new ImageIcon(ImageIO.read(new File("resources/hint.png")));
+            hintIconActive = new ImageIcon(ImageIO.read(new File("resources/hint_active.png"))); 
+            JButton hintButton = new JButton(hintIconInactive);
+            hintButton.setBounds(351, 580, 50, 50); 
+            hintButton.setContentAreaFilled(false);
+            hintButton.setBorderPainted(false);
+            hintButton.setOpaque(false);
+
+            hintButton.addActionListener(e -> {
+                hintModeActive = !hintModeActive; 
+
+                if (hintModeActive) {
+                    System.out.println("kliknieto");
+                    hintButton.setIcon(hintIconActive); 
+                } else {
+                    hintButton.setIcon(hintIconInactive); 
+                }
+            });
+
+            layeredPane.add(hintButton, Integer.valueOf(2)); 
+
+            layeredPane.revalidate();
+            layeredPane.repaint();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Hint image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         // Przycisku cofania do menu
         try {
@@ -662,6 +704,7 @@ public class SudokuGameScreen extends JFrame {
     private void undoLastMove() {
         if (!moveStack.isEmpty()) {
             Move lastMove = moveStack.pop();
+
             JButton button = sudokuButtons[lastMove.row][lastMove.col];
 
             if(isNotesActiveInCell(lastMove.row,lastMove.col)){
@@ -670,7 +713,9 @@ public class SudokuGameScreen extends JFrame {
 
             String currentText = button.getText();
             int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
+
             clearNotesInCell(lastMove.row,lastMove.col);
+
 
 
             if (currentValue != 0) {
@@ -713,6 +758,7 @@ public class SudokuGameScreen extends JFrame {
         }
     }
     
+    
     private void clearHighlightedCell() {
         if (lastHighlightedButton != null) {
             int row = lastHighlightedButton.getY() / 40;
@@ -747,7 +793,68 @@ public class SudokuGameScreen extends JFrame {
             }
         }
     }    
+    private void openHintDialog() {
+        JDialog dialog = new JDialog();
     
+        JPanel panel = new JPanel();
+        panel.setBackground(ColorPalette.BACKGROUND_COLOR);
+    
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); 
+        
+        JLabel messageLabel = new JLabel("Wykorzystałeś już wszystkie ");
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        messageLabel.setForeground(ColorPalette.TEXT_DARK_GREEN);
+        JLabel messageLabel2 = new JLabel("3 podpowiedzi");
+        messageLabel2.setFont(new Font("Arial", Font.BOLD, 20));
+        messageLabel2.setForeground(ColorPalette.TEXT_DARK_GREEN);
+
+        JButton button1 = new JButton("Zamknij");
+
+        button1.setPreferredSize(new Dimension(300, 60));
+       
+    
+        button1.setFont(new Font("Arial", Font.BOLD, 20));
+        button1.setFocusPainted(false);
+        button1.setForeground(ColorPalette.TEXT_DARK_GREEN); 
+        button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
+        button1.setBorder(BorderFactory.createEmptyBorder());
+    
+        button1.setContentAreaFilled(false);
+        button1.setOpaque(false);
+        button1.setUI(new RoundedButtonUI());
+
+        
+
+        button1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button1.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
+            }
+        });
+        
+        
+        
+        button1.addActionListener(e -> {
+            dialog.dispose();        
+        });
+        panel.add(messageLabel);
+        panel.add(messageLabel2);
+        panel.add(button1);
+    
+        dialog.add(panel);
+    
+        dialog.setSize(370, 180); 
+    
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+    }
 
 
     private void handleButtonClick(int row, int col) {
@@ -780,6 +887,17 @@ public class SudokuGameScreen extends JFrame {
                     
                     
                 }
+            }
+        }else{
+            if (hintModeActive){
+                if (hintCount >= 3) {
+                    openHintDialog();
+                }else{
+                    int hintNumber = SolveSudoku[row][col];
+                    placeNumberInCell(row, col, hintNumber, false);
+                    hintCount++;
+                }
+                
             }
         }
     
@@ -847,8 +965,6 @@ public class SudokuGameScreen extends JFrame {
         if(isNotesActiveInCell(row,col)){
             clearNotesInCell(row, col);
             n=1;
-        }else{
-            sudokuBoard[row][col] = number;
         }
         String currentText = button.getText();
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
@@ -887,6 +1003,7 @@ public class SudokuGameScreen extends JFrame {
                 }
         
             }
+            sudokuBoard[row][col] = number;
         }
         
         updateNumberButtonStates();
@@ -971,6 +1088,9 @@ public class SudokuGameScreen extends JFrame {
         errorCount = 0;
         errorLabel.setText("Błędy: " + errorCount);
         moveStack.clear();
+        moveStack2.clear();
+
+
         
 
         startTime = System.currentTimeMillis();
@@ -1276,7 +1396,6 @@ public class SudokuGameScreen extends JFrame {
     
 
     private boolean isValid(int[][] sudoku, int row, int col, int num) {
-        System.out.printf("Checking row: %d, col: %d, num: %d%n", row, col, num);
         for (int x = 0; x < SIZE; x++) {
             if (sudoku[row][x] == num || sudoku[x][col] == num || sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num) {
                 return false;
@@ -1361,7 +1480,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",2,false);
             screen.setVisible(true);
         });
     }
