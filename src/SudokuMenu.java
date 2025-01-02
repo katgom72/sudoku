@@ -76,15 +76,15 @@ public class SudokuMenu extends JFrame {
                     openSettingsDialog();
                 }else{
                     if(countEntriesByUsername(username)==0){
-                    
+                        int difficulty = firstLevel(username);
+
                         dispose(); 
                         SwingUtilities.invokeLater(() -> {
-                            SudokuGameScreen gameScreen = new SudokuGameScreen(username,1,false); 
+                            SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty,false); 
                             gameScreen.setVisible(true); 
                         });
                     }else{
                         int difficulty = determineNextLevel(username);
-                        System.out.println(difficulty);
                         dispose(); 
                         SwingUtilities.invokeLater(() -> {
                             SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty,false); 
@@ -281,7 +281,6 @@ public class SudokuMenu extends JFrame {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
-            
             int difficulty = 0;
         
             for (int i = 0; i < usersArray.length(); i++) {
@@ -369,7 +368,6 @@ public class SudokuMenu extends JFrame {
                     }
                 }
             }
-            System.out.println(difficulty);
             return difficulty; 
         } catch (IOException e) {
             e.printStackTrace();
