@@ -35,9 +35,20 @@ public class HowToPlay extends JFrame {
         
         try {
             backgrounds = new BufferedImage[]{
-                ImageIO.read(new File("resources/9.png")),
-                ImageIO.read(new File("resources/10.png")),
-                ImageIO.read(new File("resources/11.png"))
+                ImageIO.read(new File("resources/21.png")),
+                ImageIO.read(new File("resources/22.png")),
+                ImageIO.read(new File("resources/23.png")),
+                ImageIO.read(new File("resources/24.png")),
+                ImageIO.read(new File("resources/25.png")),
+                ImageIO.read(new File("resources/26.png")),
+                ImageIO.read(new File("resources/27.png")),
+                ImageIO.read(new File("resources/28.png")),
+                ImageIO.read(new File("resources/29.png")),
+                ImageIO.read(new File("resources/30.png")),
+                ImageIO.read(new File("resources/31.png")),
+                ImageIO.read(new File("resources/32.png")),
+                ImageIO.read(new File("resources/33.png")),
+                ImageIO.read(new File("resources/34.png"))
             };
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,16 +59,24 @@ public class HowToPlay extends JFrame {
         setContentPane(backgroundPanel);
 
 
-        addButton("Dalej", 25);
-        addButton2("Menu", 25);
+        addButton("Wstecz", 20,1);
+        addButton("Dalej", 20,3);
+
+        addButton("Menu", 20,2);
         
         setLocationRelativeTo(null); 
         setLayout(null); 
     }
  
-    private void addButton(String text, int yPosition) {
+    private void addButton(String text, int yPosition,int a) {
         JButton button = new JButton(text);
-        button.setBounds(320, yPosition, 100, 40);
+        if(a==1){
+            button.setBounds(18, yPosition, 120, 40);
+        }else if(a==2){
+            button.setBounds(161, yPosition, 110, 40);
+        }else{
+            button.setBounds(294, yPosition, 120, 40);
+        }
         button.setFont(new Font("Arial", Font.BOLD, 20));
         button.setFocusPainted(false);
         button.setForeground(ColorPalette.TEXT_DARK_GREEN); 
@@ -79,54 +98,38 @@ public class HowToPlay extends JFrame {
                 button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
-                backgroundPanel.setBackgroundImage(backgrounds[currentBackgroundIndex]);
-                backgroundPanel.repaint();
-            }
-        });
-        
-        add(button);
-    }
-    private void addButton2(String text, int yPosition) {
-        JButton button = new JButton(text);
-        button.setBounds(20, yPosition, 100, 40);
-        button.setFont(new Font("Arial", Font.BOLD, 20));
-        button.setFocusPainted(false);
-        button.setForeground(ColorPalette.TEXT_DARK_GREEN); 
-        button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR); 
-        button.setBorder(BorderFactory.createEmptyBorder());
-
-        button.setContentAreaFilled(false);
-        button.setOpaque(false);
-        button.setUI(new RoundedButtonUI());
-
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                button.setBackground(ColorPalette.TEXT_LIGHT_GREEN);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                button.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
-            }
-        });
-        
-        button.addActionListener(e -> {
-            dispose(); 
-            SwingUtilities.invokeLater(() -> {
-                SudokuMenu menuScreen = new SudokuMenu(username); 
-                menuScreen.setVisible(true); 
+        if (a==1){
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    currentBackgroundIndex = (currentBackgroundIndex  -1) % backgrounds.length;
+                    backgroundPanel.setBackgroundImage(backgrounds[currentBackgroundIndex]);
+                    backgroundPanel.repaint();
+                }
             });
-        });
+        }else if(a==2){
+            button.addActionListener(e -> {
+                dispose(); 
+                SwingUtilities.invokeLater(() -> {
+                    SudokuMenu menuScreen = new SudokuMenu(username); 
+                    menuScreen.setVisible(true); 
+                });
+            });
+        }else{
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.length;
+                    backgroundPanel.setBackgroundImage(backgrounds[currentBackgroundIndex]);
+                    backgroundPanel.repaint();
+                }
+            });
+        }
         
-
+        
+        
         add(button);
     }
-
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

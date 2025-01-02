@@ -196,5 +196,14 @@
         "difficultyLevel": "Bardzo trudny",
         "data_game_id": 23,
         "username": "user1"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 16,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Łatwy",
+        "data_game_id": 25,
+        "username": "username"
     }
 ]

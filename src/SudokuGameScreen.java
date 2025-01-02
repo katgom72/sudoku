@@ -316,7 +316,6 @@ public class SudokuGameScreen extends JFrame {
                 hintModeActive = !hintModeActive; 
 
                 if (hintModeActive) {
-                    System.out.println("kliknieto");
                     hintButton.setIcon(hintIconActive); 
                 } else {
                     hintButton.setIcon(hintIconInactive); 
@@ -346,7 +345,7 @@ public class SudokuGameScreen extends JFrame {
                 long solveTime = System.currentTimeMillis() - startTime+time_2;
                 getCurrentSudokuState();
                 
-                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState,notes);
+                saveGame(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,currentSudokuState,notes,hintCount);
                     
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -489,6 +488,11 @@ public class SudokuGameScreen extends JFrame {
                             }
                         }
                         notes = loadedNotes;
+                        if (user.has("hintCount")) {
+                            hintCount = user.getInt("hintCount");
+                        } else {
+                            hintCount = 0; // Domyślna wartość, jeśli brak pola w danych
+                        }
                         break;
         
                     }
@@ -997,7 +1001,7 @@ public class SudokuGameScreen extends JFrame {
                         if (isSudokuValid(sudokuBoard)){
                             long solveTime = System.currentTimeMillis() - startTime+time_2;
                             removeExistingEntry(username);
-                            saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku);
+                            saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount);
                         }
                     }
                 }
@@ -1103,7 +1107,7 @@ public class SudokuGameScreen extends JFrame {
     
     
     public void saveGameData(String username, int errorCount, int solveTime, int[][] SolveSudoku,
-                         String difficultyLevel, int initialFilledCount, int[][] initialSudoku) {
+                         String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int hint) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -1137,6 +1141,7 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("difficultyLevel", difficultyLevel);
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
+            gameData.put("hintCount", hint);
 
             gameDataList.put(gameData);
 
@@ -1158,7 +1163,7 @@ public class SudokuGameScreen extends JFrame {
 
 
     public void saveGame(String username, int errorCount,int elapsedTime, int[][] SolveSudoku,
-                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState, List<Integer>[][] notes) {
+                             String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int[][]currentSudokuState, List<Integer>[][] notes, int hint) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
          
@@ -1176,6 +1181,7 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialDiagram", initialSudoku);
             gameData.put("currentSudokuState", currentSudokuState);
             gameData.put("notes", notes);
+            gameData.put("hintCount", hint);
 
             
 
