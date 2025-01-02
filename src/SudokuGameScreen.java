@@ -731,6 +731,16 @@ public class SudokuGameScreen extends JFrame {
                 if (lastMove.isNotes == 0) {
 
                     button.setText("");
+                    for (int r = 0; r < SIZE; r++) {
+                        for (int c = 0; c < SIZE; c++) {
+                            if (lastMove.notes[r][c] != null && !lastMove.notes[r][c].isEmpty()) {
+                                clearNotesInCell(r,c);
+                                notes[r][c] = lastMove.notes[r][c] == null ? null : new ArrayList<>(lastMove.notes[r][c]);
+                                displayNotesInCell(r, c);
+                            }                            
+
+                        }
+                    }
                 } else if (lastMove.isNotes == 1) {
                     for (int r = 0; r < SIZE; r++) {
                         for (int c = 0; c < SIZE; c++) {
@@ -892,7 +902,7 @@ public class SudokuGameScreen extends JFrame {
                     
                 }
             }
-        }else{
+        }
             if (hintModeActive){
                 if (hintCount >= 3) {
                     openHintDialog();
@@ -903,7 +913,7 @@ public class SudokuGameScreen extends JFrame {
                 }
                 
             }
-        }
+        
     
         
     
@@ -1008,6 +1018,19 @@ public class SudokuGameScreen extends JFrame {
         
             }
             sudokuBoard[row][col] = number;
+        }else{
+            for (int i = 1; i < numberCount.length; i++) {
+                if(numberCount[i]!=9){
+                    break;
+                }
+                if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka
+                    if (isSudokuValid(sudokuBoard)){
+                        long solveTime = System.currentTimeMillis() - startTime+time_2;
+                        removeExistingEntry(username);
+                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount);
+                    }
+                }
+            }
         }
         
         updateNumberButtonStates();
@@ -1404,6 +1427,9 @@ public class SudokuGameScreen extends JFrame {
     private boolean isValid(int[][] sudoku, int row, int col, int num) {
         for (int x = 0; x < SIZE; x++) {
             if (sudoku[row][x] == num || sudoku[x][col] == num || sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num) {
+                //System.out.println(sudoku[row][x]);
+                //System.out.println(sudoku[x][row]);
+                //System.out.println(sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3]);
                 return false;
             }
         }

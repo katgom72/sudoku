@@ -205,5 +205,68 @@
         "difficultyLevel": "Łatwy",
         "data_game_id": 25,
         "username": "username"
+    },
+    {
+        "a1": "Za trudna",
+        "a2": 26,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 26,
+        "username": "kasia"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 40,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 27,
+        "username": "kasia"
+    },
+    {
+        "a1": "Satysfakcjonująca",
+        "a2": 29,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 28,
+        "username": "kasia"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 33,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 29,
+        "username": "kasia"
+    },
+    {
+        "a1": "Satysfakcjonująca",
+        "a2": 66,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 30,
+        "username": "kasia"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 37,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 31,
+        "username": "kasia"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 42,
+        "a3": "Trudniejszy",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Bardzo trudny",
+        "data_game_id": 32,
+        "username": "kasia"
     }
 ]
