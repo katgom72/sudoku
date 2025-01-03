@@ -741,6 +741,7 @@ public class SudokuGameScreen extends JFrame {
 
                         }
                     }
+                    sudokuBoard[lastMove.row][lastMove.col] = 0;
                 } else if (lastMove.isNotes == 1) {
                     for (int r = 0; r < SIZE; r++) {
                         for (int c = 0; c < SIZE; c++) {
@@ -796,7 +797,8 @@ public class SudokuGameScreen extends JFrame {
                 int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
     
                 if (currentValue != 0) {
-                    numberCount[currentValue]--; 
+                    numberCount[currentValue]--;
+                    sudokuBoard[row][col] = 0; 
                 }
     
                 moveStack.push(new Move(row, col, currentValue,0,notes1));
@@ -951,6 +953,7 @@ public class SudokuGameScreen extends JFrame {
                 if (notes[row][col].contains(number)) {
                     n=1;
                     notes[row][col].remove(Integer.valueOf(number));
+                    
                 } else {
                     n=1;
                     notes[row][col].add(number);
@@ -958,6 +961,13 @@ public class SudokuGameScreen extends JFrame {
                 moveStack.push(new Move(row, col, x, n, notes1));
 
                 displayNotesInCell(row, col);
+
+                if(notes[row][col] == null || notes[row][col].isEmpty()){
+                    String text = sudokuButtons[row][col].getText();
+                    if (text.matches("[1-9]")) {
+                        clearNotesInCell(row,col);
+                    }
+                }
             }
         } else {
             placeNumberInCell(row, col, number,false);
@@ -1043,12 +1053,24 @@ public class SudokuGameScreen extends JFrame {
                 notes[i][col].remove(Integer.valueOf(number));
                 displayNotesInCell(i, col);
             }
+            if(notes[i][col]==null || notes[i][col].isEmpty()){
+                String text = sudokuButtons[i][col].getText();
+                if (!text.matches("[1-9]")){
+                    clearNotesInCell(i, col);
+                }
+            }
         }
     
         for (int j = 0; j < SIZE; j++) {
             if (notes[row][j] != null && isNotesActiveInCell(row, j)) {
                 notes[row][j].remove(Integer.valueOf(number));
                 displayNotesInCell(row, j);
+            }
+            if(notes[row][j]==null || notes[row][j].isEmpty()){
+                String text = sudokuButtons[row][j].getText();
+                if (!text.matches("[1-9]")){
+                    clearNotesInCell(row, j);
+                }
             }
         }
     
@@ -1061,6 +1083,11 @@ public class SudokuGameScreen extends JFrame {
                     notes[i][j].remove(Integer.valueOf(number));
                     displayNotesInCell(i, j);
                 }
+                if(notes[i][j]==null || notes[i][j].isEmpty()){
+                    String text = sudokuButtons[i][j].getText();
+                    if (!text.matches("[1-9]")){
+                        clearNotesInCell(i, j);
+                    }                }
             }
         }
     }

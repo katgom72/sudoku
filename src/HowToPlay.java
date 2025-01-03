@@ -102,11 +102,12 @@ public class HowToPlay extends JFrame {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    currentBackgroundIndex = (currentBackgroundIndex  -1) % backgrounds.length;
+                    currentBackgroundIndex = (currentBackgroundIndex - 1 + backgrounds.length) % backgrounds.length;
                     backgroundPanel.setBackgroundImage(backgrounds[currentBackgroundIndex]);
                     backgroundPanel.repaint();
                 }
             });
+            
         }else if(a==2){
             button.addActionListener(e -> {
                 dispose(); 
