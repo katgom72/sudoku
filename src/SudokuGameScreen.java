@@ -964,7 +964,7 @@ public class SudokuGameScreen extends JFrame {
 
                 if(notes[row][col] == null || notes[row][col].isEmpty()){
                     String text = sudokuButtons[row][col].getText();
-                    if (text.matches("[1-9]")) {
+                    if (!text.matches("[1-9]")) {
                         clearNotesInCell(row,col);
                     }
                 }
@@ -989,6 +989,15 @@ public class SudokuGameScreen extends JFrame {
         if(isNotesActiveInCell(row,col)){
             clearNotesInCell(row, col);
             n=1;
+        }
+        if(notes[row][col] == null || notes[row][col].isEmpty()){
+            System.out.println("1");
+            String text = sudokuButtons[row][col].getText();
+            System.out.println(text);
+            if (!text.matches("[1-9]")) {
+
+                clearNotesInCell(row,col);
+            }
         }
         String currentText = button.getText();
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
