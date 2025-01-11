@@ -600,6 +600,7 @@ public class SudokuGameScreen extends JFrame {
         });
         button2.addActionListener(e -> {
             removeExistingEntry(username);
+            System.out.println(difficulty);
             dialog.dispose();
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -991,9 +992,7 @@ public class SudokuGameScreen extends JFrame {
             n=1;
         }
         if(notes[row][col] == null || notes[row][col].isEmpty()){
-            System.out.println("1");
             String text = sudokuButtons[row][col].getText();
-            System.out.println(text);
             if (!text.matches("[1-9]")) {
 
                 clearNotesInCell(row,col);
@@ -1139,6 +1138,7 @@ public class SudokuGameScreen extends JFrame {
                 if (originalValues[row][col]==false){
                     JButton button = sudokuButtons[row][col];
                     button.setText("");
+                    sudokuBoard[row][col]=0;
                 }
                 notes[row][col] = new ArrayList<>();
             }
@@ -1152,9 +1152,8 @@ public class SudokuGameScreen extends JFrame {
         errorLabel.setText("Błędy: " + errorCount);
         moveStack.clear();
         moveStack2.clear();
-
-
-        
+        time_2=0;
+        resetButtonColors();
 
         startTime = System.currentTimeMillis();
         timer = new Timer(1000, e -> updateTimer());
@@ -1548,7 +1547,7 @@ public class SudokuGameScreen extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            SudokuGameScreen screen = new SudokuGameScreen("username",2,false);
+            SudokuGameScreen screen = new SudokuGameScreen("username",1,false);
             screen.setVisible(true);
         });
     }
