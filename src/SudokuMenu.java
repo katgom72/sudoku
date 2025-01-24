@@ -71,7 +71,7 @@ public class SudokuMenu extends JFrame {
             }
         });
         button.addActionListener(e -> {
-            if (numer==1){
+            if (numer==1){ //graj
                 if(hasUnfinishedGame(username)){
                     openSettingsDialog();
                 }else{
@@ -174,16 +174,17 @@ public class SudokuMenu extends JFrame {
                 button1.setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
             }
         });
-        button2.addActionListener(e -> {
-            if(countEntriesByUsername(username)==0){
-                    
+        button2.addActionListener(e -> {  //nowa gra
+            if(countEntriesByUsername(username)==0){ // pierwsza rozgrywka 
+                int difficulty = firstLevel(username);
+
                 dialog.dispose();
                 dispose(); 
                 SwingUtilities.invokeLater(() -> {
-                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,1, false); 
+                    SudokuGameScreen gameScreen = new SudokuGameScreen(username,difficulty, false); 
                     gameScreen.setVisible(true); 
                 });
-            }else{
+            }else{ // kolejna 
                 int difficulty = determineNextLevel(username);
                 dialog.dispose();
                 dispose(); 
@@ -194,7 +195,7 @@ public class SudokuMenu extends JFrame {
             }
         
         });
-        button1.addActionListener(e -> {
+        button1.addActionListener(e -> { //wczytaj poprzednia rozgrywke 
             dialog.dispose();
             dispose();
             SwingUtilities.invokeLater(() -> {
@@ -336,7 +337,7 @@ public class SudokuMenu extends JFrame {
                                 difficulty = 1;
                             }
                         }
-                        if ("Średni".equals(difficultyLevel)) {
+                        else if ("Średni".equals(difficultyLevel)) {
                             if ("Trudniejszy".equals(next)) {
                                 difficulty = 3;
                             }
@@ -347,7 +348,7 @@ public class SudokuMenu extends JFrame {
                                 difficulty = 2;
                             }
                         }
-                        if ("Trudny".equals(difficultyLevel)) {
+                        else if ("Trudny".equals(difficultyLevel)) {
                             if ("Trudniejszy".equals(next)) {
                                 difficulty = 4;
                             }
@@ -358,7 +359,7 @@ public class SudokuMenu extends JFrame {
                                 difficulty = 3;
                             }
                         }
-                        if ("Bardzo trudny".equals(difficultyLevel)) {
+                        else if ("Bardzo trudny".equals(difficultyLevel)) {
                             if ("Łatwiejszy".equals(next)) {
                                 difficulty = 3;
                             } else {
@@ -368,11 +369,59 @@ public class SudokuMenu extends JFrame {
                     }
                 }
             }
-            return difficulty; 
+            // Przeszukiwanie game_data.json
+            try (FileReader gameReader = new FileReader("game_data.json")) {
+                JSONTokener gameTokener = new JSONTokener(gameReader);
+                JSONArray gameArray = new JSONArray(gameTokener);
+
+                int lastgame2 = 0;
+
+                for (int i = 0; i < gameArray.length(); i++) {
+                    JSONObject game = gameArray.getJSONObject(i);
+                    String storedUsername = game.getString("username");
+                    int dataGameId = game.getInt("data_game_id");
+                    if (storedUsername.equals(username)) {
+                        if (dataGameId > lastgame2) {
+                            lastgame2 = dataGameId;
+                        }
+                    }
+                }
+
+                // Porównanie maxFeedbackId z lastgame2
+                if (id != lastgame2) {
+                    difficulty= getNextLevel(username,lastgame2);
+                    return difficulty;
+                }else{
+                    return difficulty;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+                return difficulty; 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        return 1;
+    }
+    public static int getNextLevel(String username, int dataGameId) {
+        try (FileReader gameReader = new FileReader("game_data.json")) {
+            JSONTokener gameTokener = new JSONTokener(gameReader);
+            JSONArray gameArray = new JSONArray(gameTokener);
+    
+            for (int i = 0; i < gameArray.length(); i++) {
+                JSONObject game = gameArray.getJSONObject(i);
+                String storedUsername = game.getString("username");
+                int storedDataGameId = game.getInt("data_game_id");
+    
+                if (storedUsername.equals(username) && storedDataGameId == dataGameId) {
+                    return game.getInt("next_level");
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return 1;
+    
+        return 1; 
     }
 
     

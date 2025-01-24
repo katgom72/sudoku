@@ -23,7 +23,7 @@ public class GameDataAnalyzer {
     private static final double WEIGHT_ERRORS = 0.01;
     private static final double WEIGHT_FILLED = 0.19;
 
-    private static final Set<Integer> validGameIds = new HashSet<>(Arrays.asList(5,6,7,8,10,12,16,22,23,30,34,37,41,44,45,46,47,48,50,51,58,59,61,65,66,68,69,70,71,72));
+    private static final Set<Integer> validGameIds = new HashSet<>(Arrays.asList(5,6,7,8,10,12,16,22,23,30,34,37,41,44,45,46,47,48,50,51,58,59,61,63,65,66,68,69,70,71,72));
 
 
     public GameDataAnalyzer(int time, int hints, int errors, int initialFilled) {
