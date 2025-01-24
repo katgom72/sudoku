@@ -153,7 +153,7 @@
         "username": "username"
     },
     {
-        "a1": "Satysfakcjonująca",
+        "a1": "Za łatwa",
         "a2": 36,
         "a3": "Trudniejszy",
         "a4": "Bardziej intensywne",
@@ -198,7 +198,7 @@
         "username": "user1"
     },
     {
-        "a1": "Za łatwa",
+        "a1": "satysfakcjonujaca",
         "a2": 16,
         "a3": "Trudniejszy",
         "a4": "Bardziej intensywne",
@@ -585,7 +585,7 @@
         "username": "kubasikora"
     },
     {
-        "a1": "Za ≥atwa",
+        "a1": "Satysfakcjonujπca",
         "a2": 70,
         "a3": "Trudniejszy",
         "a4": "Relaksujπce, spokojniejsze",
@@ -628,5 +628,41 @@
         "difficultyLevel": "Trudny",
         "data_game_id": 72,
         "username": "kubasikora"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 7,
+        "a3": "Trudniejszy",
+        "a4": "Coś pomiędzy",
+        "difficultyLevel": "Łatwy",
+        "data_game_id": 73,
+        "username": "username"
+    },
+    {
+        "a1": "Za łatwa",
+        "a2": 25,
+        "a3": "Trudniejszy",
+        "a4": "Coś pomiędzy",
+        "difficultyLevel": "Średni",
+        "data_game_id": 74,
+        "username": "username"
+    },
+    {
+        "a1": "Za trudna",
+        "a2": 68,
+        "a3": "Na tym samym poziomie",
+        "a4": "Bardziej intensywne",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 75,
+        "username": "username"
+    },
+    {
+        "a1": "Za trudna",
+        "a2": 80,
+        "a3": "Na tym samym poziomie",
+        "a4": "Coś pomiędzy",
+        "difficultyLevel": "Trudny",
+        "data_game_id": 76,
+        "username": "username"
     }
 ]

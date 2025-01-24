@@ -24,8 +24,7 @@ public class EndGameScreen extends JFrame{
             this.solveTime = solveTime;
             this.errorCount = errorCount;
             this.finalId = finalId;
-            System.out.println(difficultyLevelText);
-            System.out.println(difficultyLevelText);
+
 
             setSize(432, 768);
             setResizable(false);
@@ -58,13 +57,9 @@ public class EndGameScreen extends JFrame{
 
             levelLabel2.setFont(new Font("Arial", Font.BOLD, 25));
             levelLabel2.setForeground(ColorPalette.LOGO_COLOR);
-            System.out.println(difficultyLevelText=="Średni");
             if (difficultyLevelText.equals("Łatwy")){
-                System.out.println("i1");
                 levelLabel2.setBounds(180, 370, 300, 40);
             }else if(difficultyLevelText.equals("Średni") || difficultyLevelText.equals("Trudny")){
-                System.out.println("i2");
-
                 levelLabel2.setBounds(175, 370, 300, 40);
             }else if(difficultyLevelText.equals("Bardzo trudny")){
 
@@ -99,7 +94,7 @@ public class EndGameScreen extends JFrame{
             setLocationRelativeTo(null);
             setLayout(null);
             
-            addButton("Odpowiedz na pytania", 550,1);
+            addButton("Wróć do menu", 550,1);
             
         }
 
@@ -133,7 +128,8 @@ public class EndGameScreen extends JFrame{
                 if (numer==1){
                     dispose(); 
                     SwingUtilities.invokeLater(() -> {
-                        QuestionnaireScreen screen = new QuestionnaireScreen(username, finalId,difficultyLevelText); 
+                        //QuestionnaireScreen screen = new QuestionnaireScreen(username, finalId,difficultyLevelText); 
+                        SudokuMenu screen = new SudokuMenu(username); 
                         screen.setVisible(true); 
                     });
                 }

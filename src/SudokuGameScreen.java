@@ -600,7 +600,6 @@ public class SudokuGameScreen extends JFrame {
         });
         button2.addActionListener(e -> {
             removeExistingEntry(username);
-            System.out.println(difficulty);
             dialog.dispose();
             dispose(); 
                 SwingUtilities.invokeLater(() -> {
@@ -1028,8 +1027,13 @@ public class SudokuGameScreen extends JFrame {
                     if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka
                         if (isSudokuValid(sudokuBoard)){
                             long solveTime = System.currentTimeMillis() - startTime+time_2;
+                            GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
+                            double d = analyzer.calculateD("game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
+                            int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
+                            int difficultyStreak = analyzer.determineDifficultyStreak(d,username);
+                            System.out.println("d = "+ d+ "nl: "+next_level+"utrzymanie: "+difficultyStreak);
                             removeExistingEntry(username);
-                            saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount);
+                            saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount, d,next_level,difficultyStreak);
                         }
                     }
                 }
@@ -1045,7 +1049,12 @@ public class SudokuGameScreen extends JFrame {
                     if (isSudokuValid(sudokuBoard)){
                         long solveTime = System.currentTimeMillis() - startTime+time_2;
                         removeExistingEntry(username);
-                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount);
+                        GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
+                        double d = analyzer.calculateD("game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
+                        int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
+                        int difficultyStreak = analyzer.determineDifficultyStreak(d,username);
+                        System.out.println("d = "+ d+ " nastepny poziom: "+next_level+" utrzymanie: "+difficultyStreak);
+                        saveGameData(username, errorCount,(int) solveTime, SolveSudoku, difficultyLevelText, initialFilledCount, initialSudoku,hintCount,d,next_level,difficultyStreak);
                     }
                 }
             }
@@ -1165,7 +1174,7 @@ public class SudokuGameScreen extends JFrame {
     
     
     public void saveGameData(String username, int errorCount, int solveTime, int[][] SolveSudoku,
-                         String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int hint) {
+                         String difficultyLevel, int initialFilledCount, int[][] initialSudoku, int hint, double d, int next_level, int difficultyStreak) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -1200,6 +1209,9 @@ public class SudokuGameScreen extends JFrame {
             gameData.put("initialFilledCount", initialFilledCount);
             gameData.put("initialDiagram", initialSudoku);
             gameData.put("hintCount", hint);
+            gameData.put("d", d);
+            gameData.put("next_level", next_level);
+            gameData.put("difficultyStreak", difficultyStreak);
 
             gameDataList.put(gameData);
 
@@ -1462,9 +1474,6 @@ public class SudokuGameScreen extends JFrame {
     private boolean isValid(int[][] sudoku, int row, int col, int num) {
         for (int x = 0; x < SIZE; x++) {
             if (sudoku[row][x] == num || sudoku[x][col] == num || sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3] == num) {
-                //System.out.println(sudoku[row][x]);
-                //System.out.println(sudoku[x][row]);
-                //System.out.println(sudoku[row - row % 3 + x / 3][col - col % 3 + x % 3]);
                 return false;
             }
         }

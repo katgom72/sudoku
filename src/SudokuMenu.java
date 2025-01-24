@@ -386,7 +386,6 @@ public class SudokuMenu extends JFrame {
                         }
                     }
                 }
-
                 // Porównanie maxFeedbackId z lastgame2
                 if (id != lastgame2) {
                     difficulty= getNextLevel(username,lastgame2);
