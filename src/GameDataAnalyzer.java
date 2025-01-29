@@ -245,7 +245,6 @@ public class GameDataAnalyzer {
                 double errorsNorm = (maxErrorCount > 0) ? (double) e / maxErrorCount : 0.0;
 
                 double initialFilledNorm = 1.0 - ((double) (i_f - 17) / (46 - 17));
-
                 return 100 * ((WEIGHT_TIME * timeNorm) +
                             (WEIGHT_HINTS * hintsNorm) +
                             (WEIGHT_ERRORS * errorsNorm) +
@@ -261,64 +260,92 @@ public class GameDataAnalyzer {
 
     public int analyzeDForNextLevel(double d, int difficulty) {
         try {
-            int difficultyStreak = getNextLevelForUser("game_data.json",username);
-            double minD = calculateMinD("game_data.json");
-            double maxD = calculateAverageDToHard("game_data.json");
+            int difficultyStreak = getNextLevelForUser("data/game_data.json",username);
+            double minD = calculateMinD("data/game_data.json");
+            double maxD = calculateAverageDToHard("data/game_data.json");
             int new_difficulty=difficulty;
             if (difficultyStreak>1){
+                System.out.println("1");
+                if(d>maxD){
+                    new_difficulty=difficulty-1;
+                    return new_difficulty;
+                }
                 return difficulty;
             }else{
+                System.out.println("2");
                 if (d<minD){
+                    System.out.println("3");
                     if(difficulty<4){
+                        System.out.println("4");
                         new_difficulty = difficulty+1;
                         return new_difficulty;
                     }else{
+                        System.out.println("5");
                         return difficulty;
                     }
                 }
                 if(d> minD && d<maxD){
+                    System.out.println("6");
                     new_difficulty= difficulty;
                     return new_difficulty;
                 }
                 if(d>maxD){
+                    System.out.println("7");
                     if(difficulty>1){
+                        System.out.println("8");
                         new_difficulty = difficulty-1;
                         return new_difficulty;
                     }else{
+                        System.out.println("9");
                         return difficulty;
                     }
                 }    
             }
+            System.out.println("10");
             return new_difficulty; 
         } catch (Exception e) {
             e.printStackTrace(); // Obsługa wyjątku - możesz dodać własną logikę
         }
+        System.out.println("11");
         return difficulty;       
     }
 
     public int determineDifficultyStreak(double d,String username) {
         try {
-            int difficultyStreak = getNextLevelForUser("game_data.json",username);
-            double averageD = calculateAverageD("game_data.json");
-            double minD = calculateMinD("game_data.json");
+            int difficultyStreak = getNextLevelForUser("data/game_data.json",username);
+            double averageD = calculateAverageD("data/game_data.json");
+            double minD = calculateMinD("data/game_data.json");
             double averageOfAverageDAndMinD = (minD+averageD)/2;
             if(difficultyStreak>1){
+                System.out.println("12");
+
                 return difficultyStreak-1;
             }else{
+                System.out.println("13");
+
                 if (d<averageOfAverageDAndMinD){
+                    System.out.println("14");
+
                     return 2;
                 }
                 if(d>averageOfAverageDAndMinD && d<averageD){
-                    return 5;
+                    System.out.println("15");
+
+                    return 2;
                 }
                 if(d> averageD ){
+                    System.out.println("16");
+
                     return 2;
                 }
             }
+            System.out.println("17");
+
             return 1;     
         } catch (Exception e) {
             e.printStackTrace(); 
         }
+        System.out.println("18");
         return 1;
            
     }
@@ -346,13 +373,18 @@ public class GameDataAnalyzer {
 
             // Jeśli brak rekordu dla danego użytkownika, zwracamy 1
             if (maxGameData == null) {
+                System.out.println("19");
                 return 1;
             }
 
             // Sprawdzenie, czy istnieje klucz `difficultyStreak`
             if (maxGameData.has("difficultyStreak")) {
+                System.out.println("20");
+
                 return maxGameData.getInt("difficultyStreak");
             } else {
+                System.out.println("21");
+
                 return 1;
             }
         } catch (IOException ex) {
@@ -365,27 +397,5 @@ public class GameDataAnalyzer {
             System.err.println("Nieoczekiwany błąd: " + ex.getMessage());
             return 1;
         }
-    }
-
-    
-
-    public static void main(String[] args) {
-        int solveTime = 386812; 
-        int hintsUsed = 0;        
-        int errorCount = 0;       
-        int initialFilledCount = 46;
-        String username = "username";
-
-        String jsonFilePath = "game_data.json";
-
-        GameDataAnalyzer analyzer = new GameDataAnalyzer(solveTime, hintsUsed, errorCount, initialFilledCount,username);
-
-        System.out.println(analyzer.calculateD(jsonFilePath, solveTime, hintsUsed, errorCount, initialFilledCount));
-        calculateAverageD(jsonFilePath);
-        calculateMinD(jsonFilePath);
-        calculateAverageDToHard(jsonFilePath);
-
-
-
     }
 }

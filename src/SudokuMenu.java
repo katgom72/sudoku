@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import ui.RoundedButtonUI;
 
 
 
@@ -40,7 +39,6 @@ public class SudokuMenu extends JFrame {
         addButton("Graj", 245,1);
         addButton("Jak grać?", 315,2);
         addButton("Statystyki", 385,3);
-        //addButton("Taktyki", 455,4);
         addButton("O aplikacji", 455,5);
         addButton("Wyloguj", 525,6);
 
@@ -130,7 +128,6 @@ public class SudokuMenu extends JFrame {
 
     private void openSettingsDialog() {
         JDialog dialog = new JDialog();
-        dialog.setTitle("Ustawienia");
     
         JPanel panel = new JPanel();
         panel.setBackground(ColorPalette.BACKGROUND_COLOR);
@@ -230,7 +227,7 @@ public class SudokuMenu extends JFrame {
     }
 
     public static int countEntriesByUsername(String username) {
-        try (FileReader reader = new FileReader("game_data.json")) {
+        try (FileReader reader = new FileReader("data/game_data.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
@@ -242,7 +239,7 @@ public class SudokuMenu extends JFrame {
                 String storedUsername = user.getString("username");
     
                 if (storedUsername.equals(username)) {
-                    count=count+1;
+                    count=count+1;  
                 }
             }
     
@@ -255,7 +252,7 @@ public class SudokuMenu extends JFrame {
     }
 
     public boolean hasUnfinishedGame(String username) {
-        try (FileReader reader = new FileReader("game_state.json")) {
+        try (FileReader reader = new FileReader("data/game_state.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
@@ -278,11 +275,11 @@ public class SudokuMenu extends JFrame {
         return false;
     }
     public static int firstLevel(String username) {
-        try (FileReader reader = new FileReader("registration_data.json")) {
+        try (FileReader reader = new FileReader("data/registration_data.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
-            int difficulty = 0;
+            int difficulty = 1;
         
             for (int i = 0; i < usersArray.length(); i++) {
                 JSONObject user = usersArray.getJSONObject(i);
@@ -313,7 +310,7 @@ public class SudokuMenu extends JFrame {
         return 1;
     }
     public static int determineNextLevel(String username) {
-        try (FileReader reader = new FileReader("game__feedback_data.json")) {
+        try (FileReader reader = new FileReader("data/game__feedback_data.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
             
@@ -370,7 +367,7 @@ public class SudokuMenu extends JFrame {
                 }
             }
             // Przeszukiwanie game_data.json
-            try (FileReader gameReader = new FileReader("game_data.json")) {
+            try (FileReader gameReader = new FileReader("data/game_data.json")) {
                 JSONTokener gameTokener = new JSONTokener(gameReader);
                 JSONArray gameArray = new JSONArray(gameTokener);
 
@@ -403,7 +400,7 @@ public class SudokuMenu extends JFrame {
         return 1;
     }
     public static int getNextLevel(String username, int dataGameId) {
-        try (FileReader gameReader = new FileReader("game_data.json")) {
+        try (FileReader gameReader = new FileReader("data/game_data.json")) {
             JSONTokener gameTokener = new JSONTokener(gameReader);
             JSONArray gameArray = new JSONArray(gameTokener);
     

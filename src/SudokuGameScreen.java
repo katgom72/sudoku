@@ -3,8 +3,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -106,7 +104,7 @@ public class SudokuGameScreen extends JFrame {
         if(!unfinished){
             sudokuBoard = generateSudokuWithDialog(difficulty);
         }else{
-            try (FileReader reader = new FileReader("game_state.json")) {
+            try (FileReader reader = new FileReader("data/game_state.json")) {
                 JSONTokener tokener = new JSONTokener(reader);
                 JSONArray usersArray = new JSONArray(tokener);
                 
@@ -437,7 +435,7 @@ public class SudokuGameScreen extends JFrame {
     }
     
     public void loadUnfinishedGame2(String username) {
-        try (FileReader reader = new FileReader("game_state.json")) {
+        try (FileReader reader = new FileReader("data/game_state.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
             
@@ -875,15 +873,23 @@ public class SudokuGameScreen extends JFrame {
 
     private void handleButtonClick(int row, int col) {
         resetButtonColors(); 
+        System.out.println("1");
+
         
         String cellValue = sudokuButtons[row][col].getText();
 
         sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
         for (int k = 0; k < SIZE; k++) {
+            System.out.println("3");
+
             if (k != col) {
+                System.out.println("2");
+
                 sudokuButtons[row][k].setBackground(ColorPalette.HIGHLIGHT_COLOR);
             }
             if (k != row) {
+                System.out.println("4");
+
                 sudokuButtons[k][col].setBackground(ColorPalette.HIGHLIGHT_COLOR);
             }
         }
@@ -933,7 +939,10 @@ public class SudokuGameScreen extends JFrame {
         outerLoop:
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
+                System.out.println("handle");
                 if (sudokuButtons[i][j] == selectedButton) {
+                    System.out.println("handle2");
+
                     row = i;
                     col = j;
                     break outerLoop;
@@ -942,6 +951,8 @@ public class SudokuGameScreen extends JFrame {
         }
     
         if (notesModeActive) {
+            System.out.println("1111");
+
             if (!originalValues[row][col]) {
                 @SuppressWarnings("unchecked")
                 List<Integer>[][] notes1 = new List[SIZE][SIZE];
@@ -970,12 +981,19 @@ public class SudokuGameScreen extends JFrame {
                 }
             }
         } else {
+            System.out.println("111111111");
+
             placeNumberInCell(row, col, number,false);
         }
     }
     private void placeNumberInCell(int row, int col, int number,boolean load) {
+        if (!originalValues[row][col]){
+            System.out.println(":0");
+        }
         if (originalValues[row][col]) return; 
+        
         int n=0;
+        System.out.println("place zadzialao");
 
         @SuppressWarnings("unchecked")
         List<Integer>[][] notes1 = new List[SIZE][SIZE];
@@ -987,12 +1005,16 @@ public class SudokuGameScreen extends JFrame {
     
         JButton button = sudokuButtons[row][col];
         if(isNotesActiveInCell(row,col)){
+            System.out.println("place zadzialao2");
             clearNotesInCell(row, col);
             n=1;
         }
         if(notes[row][col] == null || notes[row][col].isEmpty()){
+            System.out.println("place zadzialao3");
+
             String text = sudokuButtons[row][col].getText();
             if (!text.matches("[1-9]")) {
+                System.out.println("place zadzialao4");
 
                 clearNotesInCell(row,col);
             }
@@ -1001,10 +1023,14 @@ public class SudokuGameScreen extends JFrame {
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
         
         if (currentValue != number) {
+            System.out.println("place zadziala5o");
+
             moveStack.push(new Move(row, col, currentValue, n, notes1));
             clearNotesInCell(row, col);
         }
         if (currentValue != 0) {
+            System.out.println("place zadzialao5");
+
             numberCount[currentValue]--;
 
         }
@@ -1017,10 +1043,14 @@ public class SudokuGameScreen extends JFrame {
         
         if(!load){
             if (!isValid(sudokuBoard, row, col, number)) {
+                System.out.println("place zadzialao6");
+
                 errorCount++; 
                 errorLabel.setText("Błędy: " + errorCount); 
             }else{
                 for (int i = 1; i < numberCount.length; i++) {
+                    System.out.println("place zadzialao7");
+
                     if(numberCount[i]!=9){
                         break;
                     }
@@ -1028,7 +1058,7 @@ public class SudokuGameScreen extends JFrame {
                         if (isSudokuValid(sudokuBoard)){
                             long solveTime = System.currentTimeMillis() - startTime+time_2;
                             GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
-                            double d = analyzer.calculateD("game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
+                            double d = analyzer.calculateD("data/game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
                             int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
                             int difficultyStreak = analyzer.determineDifficultyStreak(d,username);
                             System.out.println("d = "+ d+ "nl: "+next_level+"utrzymanie: "+difficultyStreak);
@@ -1050,7 +1080,7 @@ public class SudokuGameScreen extends JFrame {
                         long solveTime = System.currentTimeMillis() - startTime+time_2;
                         removeExistingEntry(username);
                         GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
-                        double d = analyzer.calculateD("game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
+                        double d = analyzer.calculateD("data/game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
                         int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
                         int difficultyStreak = analyzer.determineDifficultyStreak(d,username);
                         System.out.println("d = "+ d+ " nastepny poziom: "+next_level+" utrzymanie: "+difficultyStreak);
@@ -1110,7 +1140,7 @@ public class SudokuGameScreen extends JFrame {
     }
     
     public boolean removeExistingEntry(String username) {
-        try (FileReader reader = new FileReader("game_state.json")) {
+        try (FileReader reader = new FileReader("data/game_state.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
     
@@ -1129,7 +1159,7 @@ public class SudokuGameScreen extends JFrame {
                 }
             }
     
-            try (FileWriter writer = new FileWriter("game_state.json")) {
+            try (FileWriter writer = new FileWriter("data/game_state.json")) {
                 writer.write(updatedArray.toString(4)); 
             }
     
@@ -1183,7 +1213,7 @@ public class SudokuGameScreen extends JFrame {
         try {
             JSONArray gameDataList;
             
-            try (FileReader reader = new FileReader("game_data.json")) {
+            try (FileReader reader = new FileReader("data/game_data.json")) {
                 gameDataList = new JSONArray(new JSONTokener(reader));
             } catch (IOException e) {
                 gameDataList = new JSONArray();
@@ -1215,7 +1245,7 @@ public class SudokuGameScreen extends JFrame {
 
             gameDataList.put(gameData);
 
-            try (FileWriter file = new FileWriter("game_data.json")) {
+            try (FileWriter file = new FileWriter("data/game_data.json")) {
                 file.write(gameDataList.toString(4));
             }
 
@@ -1256,7 +1286,7 @@ public class SudokuGameScreen extends JFrame {
             
 
             JSONArray gameDataList;
-            try (FileReader reader = new FileReader("game_state.json")) {
+            try (FileReader reader = new FileReader("data/game_state.json")) {
                 gameDataList = new JSONArray(new JSONTokener(reader));
             } catch (IOException e) {
                 gameDataList = new JSONArray();
@@ -1264,7 +1294,7 @@ public class SudokuGameScreen extends JFrame {
 
             gameDataList.put(gameData);
 
-            try (FileWriter file = new FileWriter("game_state.json")) {
+            try (FileWriter file = new FileWriter("data/game_state.json")) {
                 file.write(gameDataList.toString(4));
             }
 

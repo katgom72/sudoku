@@ -17,8 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 import java.io.FileWriter;
 
 
@@ -31,7 +29,7 @@ public class UserRegistrationScreen extends JFrame {
     private JLabel error1Label;
     private JLabel error2Label;
     private JLabel error4Label;
-    private JLabel error5Label;
+    private JLabel error3Label;
 
     private ButtonGroup skillLevelGroup;
 
@@ -74,12 +72,12 @@ public class UserRegistrationScreen extends JFrame {
         error4Label.setVisible(false); 
         add(error4Label);
 
-        error5Label = new JLabel("Użytkownik o tej nazwie już istnieje");
-        error5Label.setFont(new Font("Arial", Font.PLAIN, 14));
-        error5Label.setForeground(Color.RED);
-        error5Label.setBounds(105, 290, 550, 30);
-        error5Label.setVisible(false); 
-        add(error5Label);
+        error3Label = new JLabel("Użytkownik o tej nazwie już istnieje");
+        error3Label.setFont(new Font("Arial", Font.PLAIN, 14));
+        error3Label.setForeground(Color.RED);
+        error3Label.setBounds(105, 290, 550, 30);
+        error3Label.setVisible(false); 
+        add(error3Label);
 
 
         addSkillLevelRadioButtons(430); 
@@ -227,7 +225,7 @@ public class UserRegistrationScreen extends JFrame {
             String username = usernameField.getText().trim();
             String pin = pinField.getText().trim();
             String skillLevel = null;
-            error5Label.setVisible(false);
+            error3Label.setVisible(false);
         
             if (skillLevelGroup.getSelection() != null) {
                 skillLevel = skillLevelGroup.getSelection().getActionCommand();
@@ -247,6 +245,13 @@ public class UserRegistrationScreen extends JFrame {
                 valid = false;
             } else {
                 error2Label.setVisible(false);
+            }
+            if(doesUserExist(username)){
+                error3Label.setVisible(true);
+                valid = false;
+            }
+            else{
+                error3Label.setVisible(true);
             }
         
         
@@ -275,7 +280,7 @@ public class UserRegistrationScreen extends JFrame {
         userData.put("pin", pinHash);   
         userData.put("skillLevel", skillLevel);
 
-        File file = new File("registration_data.json");
+        File file = new File("data/registration_data.json");
         JSONArray usersArray = new JSONArray();
         if (file.exists()) {
             try (FileReader reader = new FileReader(file)) {
@@ -293,6 +298,29 @@ public class UserRegistrationScreen extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public boolean doesUserExist(String username) {
+        try (FileReader reader = new FileReader("data/registration_data.json")) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONArray usersArray = new JSONArray(tokener);
+    
+            
+        
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject user = usersArray.getJSONObject(i);
+                String storedUsername = user.getString("username");
+    
+                if (storedUsername.equals(username)) {
+                    return true;
+                }
+            }
+            return false;
+     
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+        return false;
     }
     private void addButton2(String text, int yPosition) {
         JButton button = new JButton(text);

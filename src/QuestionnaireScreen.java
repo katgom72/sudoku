@@ -13,8 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 import java.io.FileWriter;
 
 public class QuestionnaireScreen extends JFrame{
@@ -165,7 +163,7 @@ public class QuestionnaireScreen extends JFrame{
             try {
                 JSONArray gameFeedbackDataList;
                 
-                try (FileReader reader = new FileReader("game__feedback_data.json")) {
+                try (FileReader reader = new FileReader("data/game__feedback_data.json")) {
                     gameFeedbackDataList = new JSONArray(new JSONTokener(reader));
                 } catch (IOException e) {
                     gameFeedbackDataList = new JSONArray();
@@ -182,7 +180,7 @@ public class QuestionnaireScreen extends JFrame{
 
                 gameFeedbackDataList.put(gameFeedbackData);
 
-                try (FileWriter file = new FileWriter("game__feedback_data.json")) {
+                try (FileWriter file = new FileWriter("data/game__feedback_data.json")) {
                     file.write(gameFeedbackDataList.toString(4));
                 }
 

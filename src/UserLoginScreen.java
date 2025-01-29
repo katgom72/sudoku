@@ -32,8 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 
 public class UserLoginScreen extends JFrame {
 
@@ -169,7 +167,7 @@ public class UserLoginScreen extends JFrame {
         add(button);
     }
     public boolean verifyPin(String username, String inputPin) {
-        try (FileReader reader = new FileReader("registration_data.json")) {
+        try (FileReader reader = new FileReader("data/registration_data.json")) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONArray usersArray = new JSONArray(tokener);
 

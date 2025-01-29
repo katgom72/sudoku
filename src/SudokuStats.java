@@ -3,8 +3,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -155,7 +153,7 @@ public class SudokuStats extends JFrame {
     
     private Map<String, Long> getBestTimesForUser(String username) {
         Map<String, Long> bestTimes = new HashMap<>();
-        try (FileReader reader = new FileReader("game_data.json")) {
+        try (FileReader reader = new FileReader("data/game_data.json")) {
             JSONArray dataArray = new JSONArray(new JSONTokener(reader));
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject gameData = dataArray.getJSONObject(i);
@@ -175,7 +173,7 @@ public class SudokuStats extends JFrame {
         Map<String, Long> averageTimes = new HashMap<>();
         Map<String, Integer> counts = new HashMap<>(); 
     
-        try (FileReader reader = new FileReader("game_data.json")) {
+        try (FileReader reader = new FileReader("data/game_data.json")) {
             JSONArray dataArray = new JSONArray(new JSONTokener(reader));
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject gameData = dataArray.getJSONObject(i);
@@ -204,7 +202,7 @@ public class SudokuStats extends JFrame {
     private Map<String, Integer> getGamesCountForUser(String username) {
         Map<String, Integer> gamesCount = new HashMap<>();
     
-        try (FileReader reader = new FileReader("game_data.json")) {
+        try (FileReader reader = new FileReader("data/game_data.json")) {
             JSONArray dataArray = new JSONArray(new JSONTokener(reader));
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject gameData = dataArray.getJSONObject(i);
@@ -223,7 +221,7 @@ public class SudokuStats extends JFrame {
     private Map<String, Integer> getErrorlessGamesCountForUser(String username) {
         Map<String, Integer> errorlessGamesCount = new HashMap<>();
     
-        try (FileReader reader = new FileReader("game_data.json")) {
+        try (FileReader reader = new FileReader("data/game_data.json")) {
             JSONArray dataArray = new JSONArray(new JSONTokener(reader));
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject gameData = dataArray.getJSONObject(i);

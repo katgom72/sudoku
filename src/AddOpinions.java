@@ -27,13 +27,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ui.RoundedButtonUI;
-
 
 public class AddOpinions extends JFrame {
     private String username;
     private int b;
-    private JTextArea opinia;
+    private JTextArea opinion;
     private JLabel error1Label;
 
 
@@ -51,7 +49,7 @@ public class AddOpinions extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Image file not found.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        opinia = createRoundedTextArea(410);
+        opinion = createRoundedTextArea(410);
 
         error1Label = new JLabel("Ups! Wygląda na to, że zapomniałeś wpisać opinię.");
         error1Label.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -127,8 +125,8 @@ public class AddOpinions extends JFrame {
             }
             if (a==2){
                 boolean valid = true;
-                String opiniaText = opinia.getText().trim();
-                if (opiniaText.isEmpty()) {
+                String opinionText = opinion.getText().trim();
+                if (opinionText.isEmpty()) {
                     error1Label.setVisible(true); 
                     valid = false;
                 } else {
@@ -136,7 +134,7 @@ public class AddOpinions extends JFrame {
                     valid = true;
                 }
                 if(valid){
-                    saveOpinionsData(username,opiniaText);
+                    saveOpinionsData(username,opinionText);
                     dispose(); 
                     if(b==1){
                         SwingUtilities.invokeLater(() -> {
@@ -152,12 +150,12 @@ public class AddOpinions extends JFrame {
         
         add(button);
     }
-    private void saveOpinionsData(String username, String opinia) {
+    private void saveOpinionsData(String username, String opinion) {
         JSONObject opinionData = new JSONObject();
         opinionData.put("username", username);
-        opinionData.put("opinia", opinia);   
+        opinionData.put("opinion", opinion);   
 
-        File file = new File("opionions_data.json");
+        File file = new File("data/opionions_data.json");
         JSONArray opinionsArray = new JSONArray();
         if (file.exists()) {
             try (FileReader reader = new FileReader(file)) {
