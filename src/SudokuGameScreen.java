@@ -171,11 +171,9 @@ public class SudokuGameScreen extends JFrame {
                 sudokuButtons[i][j].setContentAreaFilled(true);
                 sudokuButtons[i][j].setFont(new Font("Arial", Font.BOLD, 24)); 
 
-
                 int row = i;
                 int col = j;
                 int value = sudokuBoard[i][j];
-
 
                 if (value != 0) {
                     sudokuButtons[i][j].setText(String.valueOf(value));
@@ -414,9 +412,6 @@ public class SudokuGameScreen extends JFrame {
         timer = new Timer(1000, e -> updateTimer());
         timer.start();
         
-        
-
-
     }
     // zapis stanu gry diagramu
     private int[][] getCurrentSudokuState() {
@@ -798,7 +793,7 @@ public class SudokuGameScreen extends JFrame {
                     numberCount[currentValue]--;
                     sudokuBoard[row][col] = 0; 
                 }
-    
+                
                 moveStack.push(new Move(row, col, currentValue,0,notes1));
     
                 lastHighlightedButton.setText("");
@@ -852,7 +847,6 @@ public class SudokuGameScreen extends JFrame {
         });
         
         
-        
         button1.addActionListener(e -> {
             dialog.dispose();        
         });
@@ -873,23 +867,15 @@ public class SudokuGameScreen extends JFrame {
 
     private void handleButtonClick(int row, int col) {
         resetButtonColors(); 
-        System.out.println("1");
-
         
         String cellValue = sudokuButtons[row][col].getText();
 
         sudokuButtons[row][col].setBackground(ColorPalette.BUTTON_HIGHLIGHT_COLOR);
         for (int k = 0; k < SIZE; k++) {
-            System.out.println("3");
-
             if (k != col) {
-                System.out.println("2");
-
                 sudokuButtons[row][k].setBackground(ColorPalette.HIGHLIGHT_COLOR);
             }
             if (k != row) {
-                System.out.println("4");
-
                 sudokuButtons[k][col].setBackground(ColorPalette.HIGHLIGHT_COLOR);
             }
         }
@@ -920,11 +906,7 @@ public class SudokuGameScreen extends JFrame {
                     hintCount++;
                 }
                 
-            }
-        
-    
-        
-    
+            }   
         lastHighlightedButton = sudokuButtons[row][col];
     }
     
@@ -939,9 +921,7 @@ public class SudokuGameScreen extends JFrame {
         outerLoop:
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                System.out.println("handle");
                 if (sudokuButtons[i][j] == selectedButton) {
-                    System.out.println("handle2");
 
                     row = i;
                     col = j;
@@ -951,8 +931,6 @@ public class SudokuGameScreen extends JFrame {
         }
     
         if (notesModeActive) {
-            System.out.println("1111");
-
             if (!originalValues[row][col]) {
                 @SuppressWarnings("unchecked")
                 List<Integer>[][] notes1 = new List[SIZE][SIZE];
@@ -981,19 +959,12 @@ public class SudokuGameScreen extends JFrame {
                 }
             }
         } else {
-            System.out.println("111111111");
-
             placeNumberInCell(row, col, number,false);
         }
     }
     private void placeNumberInCell(int row, int col, int number,boolean load) {
-        if (!originalValues[row][col]){
-            System.out.println(":0");
-        }
         if (originalValues[row][col]) return; 
-        
         int n=0;
-        System.out.println("place zadzialao");
 
         @SuppressWarnings("unchecked")
         List<Integer>[][] notes1 = new List[SIZE][SIZE];
@@ -1005,17 +976,12 @@ public class SudokuGameScreen extends JFrame {
     
         JButton button = sudokuButtons[row][col];
         if(isNotesActiveInCell(row,col)){
-            System.out.println("place zadzialao2");
             clearNotesInCell(row, col);
             n=1;
         }
         if(notes[row][col] == null || notes[row][col].isEmpty()){
-            System.out.println("place zadzialao3");
-
             String text = sudokuButtons[row][col].getText();
             if (!text.matches("[1-9]")) {
-                System.out.println("place zadzialao4");
-
                 clearNotesInCell(row,col);
             }
         }
@@ -1023,16 +989,11 @@ public class SudokuGameScreen extends JFrame {
         int currentValue = currentText.isEmpty() ? 0 : Integer.parseInt(currentText);
         
         if (currentValue != number) {
-            System.out.println("place zadziala5o");
-
             moveStack.push(new Move(row, col, currentValue, n, notes1));
             clearNotesInCell(row, col);
         }
         if (currentValue != 0) {
-            System.out.println("place zadzialao5");
-
             numberCount[currentValue]--;
-
         }
 
         button.setText(String.valueOf(number));
@@ -1043,14 +1004,10 @@ public class SudokuGameScreen extends JFrame {
         
         if(!load){
             if (!isValid(sudokuBoard, row, col, number)) {
-                System.out.println("place zadzialao6");
-
                 errorCount++; 
                 errorLabel.setText("Błędy: " + errorCount); 
             }else{
                 for (int i = 1; i < numberCount.length; i++) {
-                    System.out.println("place zadzialao7");
-
                     if(numberCount[i]!=9){
                         break;
                     }
@@ -1134,7 +1091,8 @@ public class SudokuGameScreen extends JFrame {
                     String text = sudokuButtons[i][j].getText();
                     if (!text.matches("[1-9]")){
                         clearNotesInCell(i, j);
-                    }                }
+                    }                
+                }
             }
         }
     }
@@ -1190,7 +1148,6 @@ public class SudokuGameScreen extends JFrame {
         errorCount = 0;
         errorLabel.setText("Błędy: " + errorCount);
         moveStack.clear();
-        moveStack2.clear();
         time_2=0;
         resetButtonColors();
 
@@ -1377,20 +1334,15 @@ public class SudokuGameScreen extends JFrame {
             "resources/l8.png",
 
         };
-    
         int imageWidth = 432;  
         int imageHeight = 768; 
-    
         JDialog loadingDialog = new JDialog((Frame) null, "Generating Sudoku", true);
         loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         loadingDialog.setSize(432, 768);
         loadingDialog.setLocationRelativeTo(null);
-    
         JLabel loadingImage = new JLabel();
-    
         Timer imageRotationTimer = new Timer(120, new ActionListener() {
             int currentIndex = 0;
-    
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentIndex = (currentIndex + 1) % imagePaths.length; 
@@ -1409,7 +1361,6 @@ public class SudokuGameScreen extends JFrame {
                 imageRotationTimer.start(); 
                 return generateSudoku(difficultyLevel); 
             }
-    
             @Override
             protected void done() {
                 
@@ -1417,7 +1368,6 @@ public class SudokuGameScreen extends JFrame {
                 loadingDialog.dispose(); 
             }
         };
-    
         worker.execute();
         loadingDialog.setVisible(true);
     

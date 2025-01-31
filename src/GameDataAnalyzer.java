@@ -265,43 +265,33 @@ public class GameDataAnalyzer {
             double maxD = calculateAverageDToHard("data/game_data.json");
             int new_difficulty=difficulty;
             if (difficultyStreak>1){
-                System.out.println("1");
                 if(d>maxD){
                     new_difficulty=difficulty-1;
                     return new_difficulty;
                 }
                 return difficulty;
             }else{
-                System.out.println("2");
                 if (d<minD){
-                    System.out.println("3");
                     if(difficulty<4){
-                        System.out.println("4");
                         new_difficulty = difficulty+1;
                         return new_difficulty;
                     }else{
-                        System.out.println("5");
                         return difficulty;
                     }
                 }
                 if(d> minD && d<maxD){
-                    System.out.println("6");
                     new_difficulty= difficulty;
                     return new_difficulty;
                 }
                 if(d>maxD){
-                    System.out.println("7");
                     if(difficulty>1){
-                        System.out.println("8");
                         new_difficulty = difficulty-1;
                         return new_difficulty;
                     }else{
-                        System.out.println("9");
                         return difficulty;
                     }
                 }    
             }
-            System.out.println("10");
             return new_difficulty; 
         } catch (Exception e) {
             e.printStackTrace(); // Obsługa wyjątku - możesz dodać własną logikę
@@ -317,35 +307,23 @@ public class GameDataAnalyzer {
             double minD = calculateMinD("data/game_data.json");
             double averageOfAverageDAndMinD = (minD+averageD)/2;
             if(difficultyStreak>1){
-                System.out.println("12");
-
                 return difficultyStreak-1;
             }else{
-                System.out.println("13");
-
                 if (d<averageOfAverageDAndMinD){
-                    System.out.println("14");
 
                     return 2;
                 }
                 if(d>averageOfAverageDAndMinD && d<averageD){
-                    System.out.println("15");
-
-                    return 2;
+                    return 5;
                 }
                 if(d> averageD ){
-                    System.out.println("16");
-
                     return 2;
                 }
             }
-            System.out.println("17");
-
             return 1;     
         } catch (Exception e) {
             e.printStackTrace(); 
         }
-        System.out.println("18");
         return 1;
            
     }
