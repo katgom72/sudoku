@@ -30,7 +30,6 @@ public class SudokuGameScreen extends JFrame {
     private int difficulty;
     private boolean unfinished;
     private Stack<Move> moveStack = new Stack<>(); 
-    private Stack<Move> moveStack2 = new Stack<>(); 
 
     private static final int SIZE = 9;
     private int[][] sudokuBoard;
@@ -1014,7 +1013,7 @@ public class SudokuGameScreen extends JFrame {
                     if (i==9 && numberCount[i]==9){ // zakonczona rozgrywka
                         if (isSudokuValid(sudokuBoard)){
                             long solveTime = System.currentTimeMillis() - startTime+time_2;
-                            GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
+                            GameDataAnalyzer analyzer = new GameDataAnalyzer(username);
                             double d = analyzer.calculateD("data/game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
                             int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
                             int difficultyStreak = analyzer.determineDifficultyStreak(d,username);
@@ -1036,7 +1035,7 @@ public class SudokuGameScreen extends JFrame {
                     if (isSudokuValid(sudokuBoard)){
                         long solveTime = System.currentTimeMillis() - startTime+time_2;
                         removeExistingEntry(username);
-                        GameDataAnalyzer analyzer = new GameDataAnalyzer((int)solveTime, hintCount, errorCount, initialFilledCount,username);
+                        GameDataAnalyzer analyzer = new GameDataAnalyzer(username);
                         double d = analyzer.calculateD("data/game_data.json", (int)solveTime, hintCount, errorCount, initialFilledCount);
                         int next_level= analyzer.analyzeDForNextLevel(d,difficulty);
                         int difficultyStreak = analyzer.determineDifficultyStreak(d,username);

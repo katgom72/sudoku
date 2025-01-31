@@ -13,10 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GameDataAnalyzer {
-    private int time;        
-    private int hints;      
-    private int errors;      
-    private int initialFilled;
+
     private String username; 
 
     
@@ -30,11 +27,8 @@ public class GameDataAnalyzer {
 
 
 
-    public GameDataAnalyzer(int time, int hints, int errors, int initialFilled, String username) {
-        this.time = time;
-        this.hints = hints;
-        this.errors = errors;
-        this.initialFilled = initialFilled;
+    public GameDataAnalyzer(String username) {
+
         this.username = username;
     }
 
@@ -81,7 +75,7 @@ public class GameDataAnalyzer {
                     int errorCount = game.getInt("errorCount");
                     int initialFilledCount = game.getInt("initialFilledCount");
 
-                    GameDataAnalyzer analyzer = new GameDataAnalyzer(solveTime, hintsUsed, errorCount, initialFilledCount, "username");
+                    GameDataAnalyzer analyzer = new GameDataAnalyzer( "username");
 
                     double d = analyzer.calculateD(jsonFilePath, solveTime, hintsUsed, errorCount, initialFilledCount);
                     dValues.add(d);
@@ -125,7 +119,7 @@ public class GameDataAnalyzer {
                     int errorCount = game.getInt("errorCount");
                     int initialFilledCount = game.getInt("initialFilledCount");
 
-                    GameDataAnalyzer analyzer = new GameDataAnalyzer(solveTime, hintsUsed, errorCount, initialFilledCount,"username");
+                    GameDataAnalyzer analyzer = new GameDataAnalyzer("username");
 
                     double d = analyzer.calculateD(jsonFilePath, solveTime, hintsUsed, errorCount, initialFilledCount);
                     dValues.add(d);
@@ -169,7 +163,7 @@ public class GameDataAnalyzer {
                     int errorCount = game.getInt("errorCount");
                     int initialFilledCount = game.getInt("initialFilledCount");
 
-                    GameDataAnalyzer analyzer = new GameDataAnalyzer(solveTime, hintsUsed, errorCount, initialFilledCount,"username");
+                    GameDataAnalyzer analyzer = new GameDataAnalyzer("username");
 
                     double d = analyzer.calculateD(jsonFilePath, solveTime, hintsUsed, errorCount, initialFilledCount);
                     dValues.add(d);
@@ -296,7 +290,6 @@ public class GameDataAnalyzer {
         } catch (Exception e) {
             e.printStackTrace(); // Obsługa wyjątku - możesz dodać własną logikę
         }
-        System.out.println("11");
         return difficulty;       
     }
 
@@ -330,14 +323,12 @@ public class GameDataAnalyzer {
 
     public static int getNextLevelForUser(String jsonFilePath, String username) {
         try {
-            // Odczyt zawartości pliku JSON
             String jsonContent = new String(Files.readAllBytes(Paths.get(jsonFilePath)));
             JSONArray gameData = new JSONArray(jsonContent);
 
             JSONObject maxGameData = null;
             int maxGameId = Integer.MIN_VALUE;
 
-            // Szukanie rekordu z maksymalnym `data_game_id` dla danego użytkownika
             for (int i = 0; i < gameData.length(); i++) {
                 JSONObject record = gameData.getJSONObject(i);
                 if (record.has("username") && record.getString("username").equals(username)) {
@@ -349,19 +340,14 @@ public class GameDataAnalyzer {
                 }
             }
 
-            // Jeśli brak rekordu dla danego użytkownika, zwracamy 1
             if (maxGameData == null) {
-                System.out.println("19");
                 return 1;
             }
 
-            // Sprawdzenie, czy istnieje klucz `difficultyStreak`
             if (maxGameData.has("difficultyStreak")) {
-                System.out.println("20");
 
                 return maxGameData.getInt("difficultyStreak");
             } else {
-                System.out.println("21");
 
                 return 1;
             }

@@ -10,20 +10,14 @@ import javax.imageio.ImageIO;
 
 public class EndGameScreen extends JFrame{
     private String username;
-    private String difficultyLevelText;
     @SuppressWarnings("unused")
     private long solveTime;
     @SuppressWarnings("unused")
     private int errorCount;
-    private int finalId;
     public EndGameScreen(String username, String difficultyLevelText, long solveTime,int errorCount, int finalId) {
             this.username = username;
-            this.difficultyLevelText = difficultyLevelText;
             this.solveTime = solveTime;
             this.errorCount = errorCount;
-            this.finalId = finalId;
-
-
             setSize(432, 768);
             setResizable(false);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
